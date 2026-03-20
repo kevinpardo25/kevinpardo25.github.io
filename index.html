@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kevin Pardo | Software Engineer - Backend Expert</title>
+    <meta name="description" content="Portfolio profesional de Kevin Pardo, Software Engineer especializado en Java, Spring Boot y arquitecturas escalables.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23050505%22/><text y=%22.9em%22 font-size=%2270%22 font-family=%22Outfit, sans-serif%22 font-weight=%22700%22 fill=%22%234f46e5%22 x=%2250%%22 text-anchor=%22middle%22>KP</text></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">KP</div>
+        <div class="nav-actions">
+            <div class="nav-links">
+                <a href="#inicio" data-i18n="nav_inicio">Inicio</a>
+                <a href="#sobre-mi" data-i18n="nav_sobre_mi">Sobre Mí</a>
+                <a href="#experiencia" data-i18n="nav_experiencia">Experiencia</a>
+                <a href="#habilidades" data-i18n="nav_habilidades">Habilidades</a>
+                <a href="#contacto" data-i18n="nav_contacto">Contacto</a>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button id="lang-toggle" class="theme-toggle" style="font-size: 0.75rem; font-weight: 700; width: auto; padding: 0 0.8rem;" aria-label="Cambiar idioma">
+                    EN
+                </button>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Cambiar tema">
+                    <svg id="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    <svg id="sun-icon" style="display:none" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section id="inicio" class="hero">
+            <h1 class="animate-fade-in" data-i18n="hero_title"><span class="gradient-text">Kevin Pardo</span><br>Software Engineer</h1>
+            <p class="animate-fade-in" data-i18n="hero_p">Especialista en la arquitectura de sistemas escalables y de alto rendimiento. Con una sólida trayectoria en el ecosistema <strong>Java, Spring Boot y microservicios</strong>, diseño soluciones robustas centradas en el rigor técnico, la seguridad avanzada y la optimización continua de procesos operativos.</p>
+            <div class="cta-buttons animate-fade-in">
+                <a href="#experiencia" class="btn btn-primary" data-i18n="hero_btn_exp">Ver Experiencia</a>
+                <a href="#contacto" class="btn btn-outline" data-i18n="hero_btn_contact">Contactar</a>
+            </div>
+        </section>
+
+        <section id="sobre-mi">
+            <h2 class="animate-fade-in" data-i18n="about_title">Sobre Mí</h2>
+            <div class="glass card animate-fade-in">
+                <p style="margin-bottom: 1.5rem;" data-i18n="about_p1">Ingeniero de Sistemas con una trayectoria consolidada en la arquitectura y desarrollo de soluciones backend de alta disponibilidad. Especialista en el ecosistema Java y Spring Boot, mi enfoque profesional se sustenta en tres pilares fundamentales: <strong>seguridad rigurosa, automatización estratégica y escalabilidad eficiente</strong>.</p>
+                <p data-i18n="about_p2">A lo largo de mi carrera en entornos de alta exigencia, incluyendo el sector bancario y la consultoría tecnológica avanzada, he demostrado una capacidad excepcional para transformar requisitos complejos en sistemas técnicos robustos y mantenibles. Mi compromiso con la <strong>excelencia técnica y el Código Limpio (Clean Code)</strong> me permite entregar soluciones que trascienden el código funcional, optimizando el rendimiento del negocio y minimizando la deuda técnica. Soy un profesional proactivo con habilidades de liderazgo contrastadas, habituado a la toma de decisiones críticas y a impulsar equipos de alto rendimiento hacia la innovación tecnológica.</p>
+            </div>
+        </section>
+
+        <section id="experiencia">
+            <h2 class="animate-fade-in" data-i18n="exp_title">Experiencia Profesional</h2>
+            <div class="timeline animate-fade-in">
+                <div class="timeline-item animate-fade-in">
+                    <span class="date" data-i18n="exp_date1">Jul 2024 – Actualidad</span>
+                    <h3 data-i18n="exp_role1">Analista de Sistema</h3>
+                    <p><strong data-i18n="exp_company1">Ditech Group</strong></p>
+                    <p data-i18n="exp_desc1">Liderando iniciativas de análisis técnico y desarrollo de soluciones robustas para el ecosistema corporativo.</p>
+                </div>
+                <div class="timeline-item animate-fade-in">
+                    <span class="date" data-i18n="exp_date2">Ene 2023 – Jul 2024</span>
+                    <h3 data-i18n="exp_role2">Desarrollador Sénior</h3>
+                    <p><strong data-i18n="exp_company2">Bahia Software</strong></p>
+                    <p data-i18n="exp_desc2">Desarrollo de microservicios escalables utilizando arquitecturas modernas.</p>
+                    <div class="tech-badges">
+                        <span class="badge">Spring Framework</span>
+                        <span class="badge">Spring Boot</span>
+                        <span class="badge">Microservicios</span>
+                    </div>
+                </div>
+                <div class="timeline-item animate-fade-in">
+                    <span class="date" data-i18n="exp_date3">Oct 2022 – Nov 2022</span>
+                    <h3 data-i18n="exp_role3">Desarrollador Back-end Spring Boot</h3>
+                    <p><strong data-i18n="exp_company3">IN2 INGENIERIA DE LA INFORMACION</strong></p>
+                    <p data-i18n="exp_desc3">Implementación de servicios backend y aseguramiento de calidad mediante pruebas unitarias.</p>
+                    <div class="tech-badges">
+                        <span class="badge">JUnit</span>
+                        <span class="badge">Mockito</span>
+                        <span class="badge">Java</span>
+                    </div>
+                </div>
+                <div class="timeline-item animate-fade-in">
+                    <span class="date" data-i18n="exp_date4">Ene 2022 – Oct 2022</span>
+                    <h3 data-i18n="exp_role4">Analista de Desarrollo Especializado 2</h3>
+                    <p><strong data-i18n="exp_company4">Banco AV Villas</strong></p>
+                    <p data-i18n="exp_desc4">Desarrollo de integraciones bancarias críticas y mantenimiento de sistemas legacy.</p>
+                    <div class="tech-badges">
+                        <span class="badge">Java</span>
+                        <span class="badge">SQL Server</span>
+                        <span class="badge">Integraciones</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="habilidades">
+            <h2 class="animate-fade-in" data-i18n="skills_title">Tech Stack</h2>
+            <div class="grid">
+                <div class="glass card animate-fade-in">
+                    <h3 data-i18n="skills_cat1">Backend & Core</h3>
+                    <div class="tech-badges">
+                        <span class="badge">Java (Expert)</span>
+                        <span class="badge">Spring Boot</span>
+                        <span class="badge">Spring Cloud</span>
+                        <span class="badge">JSP</span>
+                        <span class="badge">C#</span>
+                    </div>
+                </div>
+                <div class="glass card animate-fade-in">
+                    <h3 data-i18n="skills_cat2">Bases de Datos</h3>
+                    <div class="tech-badges">
+                        <span class="badge">PostgreSQL</span>
+                        <span class="badge">Microsoft SQL Server</span>
+                        <span class="badge">Oracle Database</span>
+                    </div>
+                </div>
+                <div class="glass card animate-fade-in">
+                    <h3 data-i18n="skills_cat3">DevOps & QA</h3>
+                    <div class="tech-badges">
+                        <span class="badge">Git</span>
+                        <span class="badge">Docker</span>
+                        <span class="badge">Kubernetes</span>
+                        <span class="badge">AWS</span>
+                        <span class="badge">JUnit / Mockito</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contacto">
+            <h2 class="animate-fade-in" data-i18n="contact_title">Hablemos</h2>
+            <div class="glass card animate-fade-in" style="max-width: 600px; margin: 0 auto; text-align: center;">
+                <p data-i18n="contact_p">¿Interesado en trabajar conmigo o simplemente quieres conectar?</p>
+                <div class="cta-buttons" style="margin-top: 2rem;">
+                    <a href="https://www.linkedin.com/in/kevinpardo25/" target="_blank" class="btn btn-primary" data-i18n="contact_btn_li">LinkedIn Profile</a>
+                    <a href="mailto:correo@ejemplo.com" class="btn btn-outline" data-i18n="contact_btn_mail">Enviar Email</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer style="padding: 2rem; text-align: center; color: var(--text-muted); border-top: 1px solid var(--glass-border);">
+        <p data-i18n="footer_text">&copy; 2026 Kevin Pardo - Desarrollado con Foco y Precisión</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
