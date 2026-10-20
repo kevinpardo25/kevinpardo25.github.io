@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Quién es más probable que...? - KP Herramientas</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=display" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        party: {
+                            bg: '#0f0c1b',
+                            card: '#18132a',
+                            cardLight: '#231c3d',
+                            border: '#312754',
+                            pink: '#ff2a85',
+                            purple: '#8b5cf6',
+                            cyan: '#00f0ff',
+                            yellow: '#ffcc00',
+                            accent: '#ff2a85'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        heading: ['Space Grotesk', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0f0c1b;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        /* Header Estilo Integrado */
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgba(15, 12, 27, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(49, 39, 84, 0.8);
+            padding: 0.75rem 1.25rem;
+            position: sticky;
+            top: 0;
+            z-index: 60;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #a78bfa;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 0.4rem 0.85rem;
+            border-radius: 0.5rem;
+            background: rgba(35, 28, 61, 0.8);
+            border: 1px solid rgba(49, 39, 84, 0.8);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: #ff2a85;
+            border-color: rgba(255, 42, 133, 0.5);
+            box-shadow: 0 0 12px rgba(255, 42, 133, 0.25);
+            transform: translateX(-2px);
+        }
+
+        .back-btn .btn-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.25s ease;
+        }
+
+        .back-btn:hover .btn-icon {
+            transform: translateX(-3px);
+        }
+
+        .brand-badge {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.85rem;
+            color: #e2e8f0;
+            background: rgba(255, 42, 133, 0.1);
+            border: 1px solid rgba(255, 42, 133, 0.3);
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            letter-spacing: 0.05em;
+        }
+
+        .brand-badge strong {
+            color: #ff2a85;
+            font-weight: 700;
+        }
+
+        /* Animaciones personalizadas */
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(255, 42, 133, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(0, 240, 255, 0.5); }
+        }
+
+        .card-glow {
+            animation: pulseGlow 4s infinite alternate;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #ff2a85, #00f0ff, #ffcc00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f0c1b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #312754;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff2a85;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Top Portfolio Navigation Header -->
+    <header class="top-nav">
+        <a href="index.html" class="back-btn" title="Regresar a Kevin Pardo - Portfolio">
+            <span class="btn-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </span>
+            <span>Volver al portafolio</span>
+        </a>
+        <div class="brand-badge">
+            <strong>KP</strong> Herramientas
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-4xl w-full mx-auto p-4 md:p-6 flex-grow flex flex-col justify-center">
+
+        <!-- 1. PANTALLA DE CONFIGURACIÓN DE JUEGO -->
+        <section id="screen-setup" class="space-y-6">
+            <div class="text-center space-y-2">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-party-pink/10 border border-party-pink/30 text-party-pink text-xs font-bold uppercase tracking-widest">
+                    <i class="fa-solid fa-gamepad"></i> Juego de Grupo Pass & Play
+                </div>
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight gradient-text font-heading">
+                    ¿Quién es más probable que...?
+                </h1>
+                <p class="text-slate-400 text-sm md:text-base max-w-lg mx-auto">
+                    Añade a tus amigos, elige la categoría y descubre lo que el grupo piensa realmente de ti.
+                </p>
+            </div>
+
+            <!-- Panel de Jugadores -->
+            <div class="bg-party-card border border-party-border rounded-2xl p-5 md:p-6 shadow-xl space-y-4">
+                <div class="flex justify-between items-center border-b border-party-border pb-3">
+                    <h2 class="font-heading text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-users text-party-pink"></i> Jugadores (<span id="player-count-label">0</span>/12)
+                    </h2>
+                    <span class="text-xs text-slate-400">Mínimo 2 jugadores</span>
+                </div>
+
+                <!-- Input para agregar jugador -->
+                <div class="flex gap-2">
+                    <input type="text" id="input-player-name" placeholder="Nombre del jugador..." maxlength="15"
+                        class="flex-grow bg-party-bg border border-party-border focus:border-party-pink outline-none px-4 py-3 rounded-xl text-white text-sm font-medium">
+                    <button onclick="addPlayer()" 
+                        class="bg-party-pink hover:bg-pink-600 text-white font-bold px-5 py-3 rounded-xl text-sm transition flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">Añadir</span>
+                    </button>
+                </div>
+
+                <!-- Lista de Jugadores -->
+                <div id="players-list" class="flex flex-wrap gap-2 pt-2 max-h-48 overflow-y-auto">
+                    <!-- Jugadores dinámicos por JS -->
+                </div>
+            </div>
+
+            <!-- Panel de Opciones de Juego -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Categorías -->
+                <div class="bg-party-card border border-party-border rounded-2xl p-5 shadow-xl space-y-3">
+                    <h2 class="font-heading text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-party-cyan"></i> Categoría de Preguntas
+                    </h2>
+                    <select id="select-category" class="w-full bg-party-bg border border-party-border focus:border-party-cyan outline-none p-3 rounded-xl text-slate-200 text-sm font-medium">
+                        <option value="mix">🎉 Modo Mixto (Todas las categorías)</option>
+                        <option value="funny">😂 Divertidas y Locuras</option>
+                        <option value="party">🔥 De Fiesta / Picantes (18+)</option>
+                        <option value="school">💼 Escuela / Trabajo / Profesionales</option>
+                        <option value="love">❤️ Amor / Relaciones</option>
+                        <option value="extreme">⚡ Amistad Extrema</option>
+                    </select>
+                </div>
+
+                <!-- Modo de Votación y Rondas -->
+                <div class="bg-party-card border border-party-border rounded-2xl p-5 shadow-xl space-y-3">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">Modo de Votación</label>
+                            <select id="select-vote-mode" class="w-full bg-party-bg border border-party-border focus:border-party-purple outline-none p-2.5 rounded-xl text-slate-200 text-xs font-medium">
+                                <option value="secret">🕵️ Votación Secreta (Pase de Móvil)</option>
+                                <option value="verbal">⚡ Cuenta Atrás (Apunten a la de 3)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-1">Rondas</label>
+                            <select id="select-rounds" class="w-full bg-party-bg border border-party-border focus:border-party-purple outline-none p-2.5 rounded-xl text-slate-200 text-xs font-medium">
+                                <option value="10">10 Preguntas</option>
+                                <option value="15" selected>15 Preguntas</option>
+                                <option value="20">20 Preguntas</option>
+                                <option value="999">Infinito (Hasta cansar)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de Preguntas Personalizadas -->
+            <div class="bg-party-card border border-party-border rounded-2xl p-5 shadow-xl space-y-3">
+                <div class="flex justify-between items-center">
+                    <h2 class="font-heading text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-party-yellow"></i> Añadir Preguntas Personalizadas (Opcional)
+                    </h2>
+                    <span id="custom-count" class="text-xs text-slate-400">0 agregadas</span>
+                </div>
+                <div class="flex gap-2">
+                    <input type="text" id="input-custom-q" placeholder="Ej: ...se quede dormido en una fiesta?"
+                        class="flex-grow bg-party-bg border border-party-border focus:border-party-yellow outline-none px-4 py-2.5 rounded-xl text-white text-xs">
+                    <button onclick="addCustomQuestion()" class="bg-party-yellow hover:bg-yellow-500 text-slate-900 font-bold px-4 py-2.5 rounded-xl text-xs transition">
+                        Guardar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Botón de Inicio -->
+            <button onclick="startGame()" class="w-full bg-gradient-to-r from-party-pink via-purple-600 to-party-cyan hover:opacity-90 text-white font-extrabold text-lg py-4 rounded-2xl shadow-2xl transition transform active:scale-95 flex items-center justify-center gap-3">
+                <i class="fa-solid fa-play"></i> ¡EMPEZAR PARTIDA!
+            </button>
+        </section>
+
+        <!-- 2. PANTALLA DE JUEGO PRINCIPAL -->
+        <section id="screen-game" class="hidden space-y-6">
+            <!-- Barra Superior de Juego -->
+            <div class="flex justify-between items-center bg-party-card border border-party-border rounded-2xl p-4">
+                <div class="text-xs text-slate-400">
+                    Ronda <span id="game-round-current" class="text-party-pink font-bold text-base">1</span> / <span id="game-round-total">15</span>
+                </div>
+                <div id="game-category-badge" class="bg-party-bg border border-party-border px-3 py-1 rounded-full text-xs font-bold text-party-cyan">
+                    Divertidas
+                </div>
+                <button onclick="confirmExitGame()" class="text-slate-400 hover:text-red-400 text-xs font-bold transition">
+                    <i class="fa-solid fa-xmark text-sm"></i> Salir
+                </button>
+            </div>
+
+            <!-- Tarjeta Principal de Pregunta -->
+            <div class="bg-party-card border border-party-border rounded-3xl p-8 text-center space-y-4 card-glow relative overflow-hidden">
+                <div class="text-party-yellow text-xs font-extrabold tracking-widest uppercase">
+                    ¿QUIÉN ES MÁS PROBABLE QUE...
+                </div>
+                <h2 id="current-question-text" class="text-2xl md:text-4xl font-extrabold text-white leading-snug font-heading">
+                    ¿Cargando pregunta...?
+                </h2>
+            </div>
+
+            <!-- SUB-MODO A: PASO DE TELÉFONO / VOTACIÓN SECRETA -->
+            <div id="vote-mode-secret" class="space-y-4">
+                <!-- Indicador de Turno -->
+                <div id="turn-banner" class="bg-party-cardLight border border-party-purple/50 rounded-2xl p-4 text-center space-y-1">
+                    <p class="text-xs text-slate-400">Turno de votación para:</p>
+                    <h3 id="current-voter-name" class="text-2xl font-extrabold text-party-cyan font-heading">
+                        Nombre Jugador
+                    </h3>
+                </div>
+
+                <!-- Grid de Opciones de Voto -->
+                <div class="space-y-2">
+                    <p class="text-center text-xs text-slate-400">Elige a quién votas para esta afirmación:</p>
+                    <div id="voting-candidates-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <!-- Opciones dinámicas -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-MODO B: VOTACIÓN RÁPIDA VERBAL (CUENTA ATRÁS) -->
+            <div id="vote-mode-verbal" class="hidden space-y-4 text-center">
+                <div class="bg-party-card border border-party-border rounded-2xl p-6 space-y-4">
+                    <p class="text-sm text-slate-300">
+                        Cuenten en alto <strong>3... 2... 1...</strong> y apunten todos al mismo tiempo a la persona elegida.
+                    </p>
+                    <div id="countdown-display" class="text-6xl font-black text-party-yellow font-heading my-2">
+                        3
+                    </div>
+                    <button onclick="startVerbalCountdown()" class="bg-party-purple hover:bg-purple-600 text-white font-bold px-6 py-3 rounded-xl text-sm transition">
+                        <i class="fa-solid fa-stopwatch"></i> Iniciar Cuenta Atrás
+                    </button>
+                </div>
+
+                <div class="space-y-2">
+                    <p class="text-xs text-slate-400">Selecciona al jugador que la mayoría apuntó:</p>
+                    <div id="verbal-candidates-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <!-- Candidatos para ganador directo -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. PANTALLA DE RESULTADOS DE RONDA -->
+        <section id="screen-round-result" class="hidden space-y-6 text-center">
+            <div class="bg-party-card border border-party-border rounded-3xl p-6 md:p-8 space-y-6 card-glow">
+                <div class="inline-block bg-party-pink/20 text-party-pink text-xs font-extrabold px-3 py-1 rounded-full uppercase">
+                    ¡Resultado de la ronda!
+                </div>
+
+                <div class="space-y-2">
+                    <p id="round-question-summary" class="text-slate-400 text-sm italic">
+                        "¿Quién es más probable que...?"
+                    </p>
+                    <h2 class="text-xl font-bold text-slate-300">El grupo ha decidido que el más probable es:</h2>
+                </div>
+
+                <!-- Ganador de la ronda -->
+                <div class="bg-party-bg border border-party-border rounded-2xl p-6 max-w-sm mx-auto space-y-3 transform scale-105">
+                    <div id="winner-avatar" class="w-20 h-20 rounded-full mx-auto flex items-center justify-center text-3xl font-extrabold text-white shadow-xl">
+                        A
+                    </div>
+                    <h3 id="winner-name" class="text-3xl font-extrabold text-white font-heading">
+                        Nombre
+                    </h3>
+                    <div id="winner-tag" class="inline-block bg-party-yellow/20 text-party-yellow border border-party-yellow/40 text-xs font-extrabold px-3 py-1 rounded-full">
+                        🏆 +1 Voto / Título
+                    </div>
+                </div>
+
+                <!-- Desglose de Votos (Si es modo secreto) -->
+                <div id="votes-breakdown-box" class="space-y-3 text-left max-w-md mx-auto pt-2">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider text-center">Desglose de Votación:</h4>
+                    <div id="votes-breakdown-list" class="space-y-2">
+                        <!-- Lista de barras de votos -->
+                    </div>
+                </div>
+
+                <button onclick="nextRound()" class="w-full bg-party-pink hover:bg-pink-600 text-white font-extrabold text-lg py-4 rounded-2xl shadow-xl transition">
+                    Siguiente Pregunta <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- 4. PANTALLA PODIUM FINAL Y ESTADÍSTICAS -->
+        <section id="screen-game-over" class="hidden space-y-6 text-center">
+            <div class="space-y-2">
+                <h1 class="text-4xl md:text-5xl font-black gradient-text font-heading">
+                    ¡FIN DE LA PARTIDA!
+                </h1>
+                <p class="text-slate-400 text-sm">
+                    Aquí están los resultados finales y los títulos otorgados por el grupo:
+                </p>
+            </div>
+
+            <!-- Podio de Ganadores -->
+            <div id="podium-container" class="grid grid-cols-3 gap-2 items-end pt-8 pb-4 max-w-md mx-auto">
+                <!-- 2do Lugar -->
+                <div id="podium-2" class="bg-party-card border border-party-border rounded-t-2xl p-3 flex flex-col items-center h-36 justify-end">
+                    <div id="p2-avatar" class="w-10 h-10 rounded-full bg-slate-500 text-white flex items-center justify-center font-bold text-sm mb-1">2</div>
+                    <span id="p2-name" class="text-xs font-bold text-white truncate w-full">Player</span>
+                    <span id="p2-score" class="text-[10px] text-slate-400">0 pts</span>
+                    <div class="w-full bg-slate-700 h-12 mt-2 rounded-t-lg flex items-center justify-center text-slate-300 font-bold text-sm">2º</div>
+                </div>
+                <!-- 1er Lugar -->
+                <div id="podium-1" class="bg-party-card border border-party-pink rounded-t-2xl p-3 flex flex-col items-center h-48 justify-end shadow-2xl relative">
+                    <div class="absolute -top-6 text-2xl">👑</div>
+                    <div id="p1-avatar" class="w-12 h-12 rounded-full bg-party-pink text-white flex items-center justify-center font-extrabold text-base mb-1">1</div>
+                    <span id="p1-name" class="text-xs font-bold text-white truncate w-full">Winner</span>
+                    <span id="p1-score" class="text-[10px] text-party-pink font-bold">0 pts</span>
+                    <div class="w-full bg-party-pink h-20 mt-2 rounded-t-lg flex items-center justify-center text-white font-extrabold text-base">1º</div>
+                </div>
+                <!-- 3er Lugar -->
+                <div id="podium-3" class="bg-party-card border border-party-border rounded-t-2xl p-3 flex flex-col items-center h-28 justify-end">
+                    <div id="p3-avatar" class="w-8 h-8 rounded-full bg-amber-700 text-white flex items-center justify-center font-bold text-xs mb-1">3</div>
+                    <span id="p3-name" class="text-xs font-bold text-white truncate w-full">Player</span>
+                    <span id="p3-score" class="text-[10px] text-slate-400">0 pts</span>
+                    <div class="w-full bg-amber-900/60 h-8 mt-2 rounded-t-lg flex items-center justify-center text-amber-200 font-bold text-xs">3º</div>
+                </div>
+            </div>
+
+            <!-- Tabla de Clasificación Completa -->
+            <div class="bg-party-card border border-party-border rounded-2xl p-5 text-left space-y-3">
+                <h3 class="font-heading font-bold text-white text-base border-b border-party-border pb-2">
+                    <i class="fa-solid fa-trophy text-party-yellow"></i> Tabla General de Etiquetas Acumuladas
+                </h3>
+                <div id="final-leaderboard-list" class="space-y-2">
+                    <!-- Filas dinámicas -->
+                </div>
+            </div>
+
+            <!-- Botones de reinicio -->
+            <div class="flex gap-3">
+                <button onclick="restartSameGame()" class="flex-1 bg-party-pink hover:bg-pink-600 text-white font-bold py-3.5 rounded-xl text-sm transition">
+                    <i class="fa-solid fa-rotate-right"></i> Jugar de nuevo
+                </button>
+                <button onclick="returnToSetup()" class="flex-1 bg-party-cardLight hover:bg-party-border text-slate-200 font-bold py-3.5 rounded-xl text-sm transition">
+                    <i class="fa-solid fa-gear"></i> Nueva Configuración
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-party-border/60 bg-party-bg py-4 text-center text-xs text-slate-500">
+        ¿Quién es más probable que...? &copy; 2026 - KP Herramientas
+    </footer>
+
+    <!-- LÓGICA JAVASCRIPT -->
+    <script>
+        // --- BANCO DE PREGUNTAS (CATEGORIZADO) ---
+        const QUESTION_BANK = {
+            funny: [
+                "se tropiece con sus propios pies en público?",
+                "se ría en un momento totalmente inapropiado?",
+                "se quede encerrado en el baño de un restaurante?",
+                "envíe un mensaje vergonzoso al grupo equivocado?",
+                "se olvide de dónde aparcó el coche?",
+                "se quede dormido viendo una película en el cine?",
+                "se asuste con su propia sombra o con un insecto inofensivo?",
+                "intente abrir la puerta de su casa con la tarjeta del autobús?",
+                "hable solo por la calle mientras camina?",
+                "rompa algo valioso por accidente y disimule?"
+            ],
+            party: [
+                "acabe bailando encima de una mesa en una fiesta?",
+                "pierda el teléfono móvil durante una noche de fiesta?",
+                "haga un amigo de toda la vida en la cola del baño?",
+                "sea el primero en quedarse dormido en una reunión?",
+                "organice un viaje improvisado a las 3 de la mañana?",
+                "intente colar a 5 amigos en una discoteca VIP?",
+                "se sepa la letra de absolutamente todas las canciones viejas?",
+                "llame a su ex de fiesta a altas horas de la madrugada?",
+                "desaparezca de la fiesta sin avisar a nadie?",
+                "se gaste todo su dinero invitando a rondas a desconocidos?"
+            ],
+            school: [
+                "se convierta en millonario antes de los 30 años?",
+                "termine trabajando en algo totalmente distinto a lo que estudió?",
+                "olvide presentarse a un examen o reunión muy importante?",
+                "se convierta en el jefe o CEO de una gran empresa?",
+                "sea arrestado por una protesta extremadamente extraña?",
+                "llegue tarde a su propia boda por quedarse trabajando?",
+                "gane un Premio Nobel o invente algo revolucionario?",
+                "se convierta en un famoso influencer o streamer?",
+                "se mude a vivir a un país completamente remoto?",
+                "sobreviva solo a un apocalipsis zombi gracias a su astucia?"
+            ],
+            love: [
+                "se enamore a primera vista de un desconocido en el tren?",
+                "tenga una cita a ciegas que termine en desastre total?",
+                "se case en Las Vegas impulsivamente?",
+                "mantenga una relación en secreto durante meses?",
+                "siga siendo amigo cercano de todos sus ex?",
+                "escriba una canción de amor embarazosa?",
+                "tenga un flechazo con un personaje de dibujos animados?",
+                "cancele una cita a última hora por quedarse jugando o viendo series?",
+                "se ponga a llorar viendo un anuncio de televisión conmovedor?",
+                "se declare a alguien de la forma más cursi posible?"
+            ],
+            extreme: [
+                "sobreviva una semana entera en la selva sin ayuda?",
+                "se apunte a un deporte extremo sin haber entrenado jamás?",
+                "coma algo caducado por no tirarlo a la basura?",
+                "se haga un tatuaje del que se arrepienta al día siguiente?",
+                "acepte un reto peligroso solo por orgullo?",
+                "diga siempre la verdad sin ningún tipo de filtro?",
+                "se guarde un secreto grave durante más de 10 años?",
+                "salte en paracaídas espontáneamente este fin de semana?",
+                "se enfrente a un atraco intentando negociar con el ladrón?",
+                "adopte a 10 animales callejeros en el mismo mes?"
+            ]
+        };
+
+        const AVATAR_COLORS = [
+            '#ff2a85', '#00f0ff', '#8b5cf6', '#ffcc00', 
+            '#10b981', '#f97316', '#ec4899', '#3b82f6',
+            '#a855f7', '#06b6d4', '#eab308', '#ef4444'
+        ];
+
+        // --- ESTADO DEL JUEGO ---
+        let players = [
+            { id: 1, name: "Carlos", color: "#ff2a85", score: 0 },
+            { id: 2, name: "María", color: "#00f0ff", score: 0 },
+            { id: 3, name: "Dani", color: "#8b5cf6", score: 0 }
+        ];
+
+        let customQuestions = [];
+        let activeQuestions = [];
+        let currentQuestionIndex = 0;
+        let totalRounds = 15;
+        let voteMode = 'secret'; // 'secret' | 'verbal'
+
+        // Estado interno de la ronda
+        let currentVoterIndex = 0;
+        let roundVotes = {}; // { playerId: voteCount }
+
+        // --- MANEJO DE JUGADORES ---
+        function renderPlayers() {
+            const container = document.getElementById('players-list');
+            const countLabel = document.getElementById('player-count-label');
+            container.innerHTML = '';
+            countLabel.innerText = players.length;
+
+            players.forEach((p, index) => {
+                const badge = document.createElement('div');
+                badge.className = "flex items-center gap-2 bg-party-bg border border-party-border px-3 py-1.5 rounded-xl text-xs font-bold text-white shadow-sm";
+                badge.innerHTML = `
+                    <span class="w-3 h-3 rounded-full inline-block" style="background-color: ${p.color}"></span>
+                    <span>${escapeHtml(p.name)}</span>
+                    <button onclick="removePlayer(${index})" class="text-slate-500 hover:text-red-400 ml-1">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                `;
+                container.appendChild(badge);
+            });
+        }
+
+        function addPlayer() {
+            const input = document.getElementById('input-player-name');
+            const name = input.value.trim();
+
+            if (!name) return;
+            if (players.length >= 12) {
+                alert("Límite máximo de 12 jugadores alcanzado.");
+                return;
+            }
+
+            const color = AVATAR_COLORS[players.length % AVATAR_COLORS.length];
+            players.push({
+                id: Date.now() + Math.random(),
+                name: name,
+                color: color,
+                score: 0
+            });
+
+            input.value = '';
+            renderPlayers();
+        }
+
+        function removePlayer(index) {
+            if (players.length <= 2) {
+                alert("Se requieren al menos 2 jugadores para jugar.");
+                return;
+            }
+            players.splice(index, 1);
+            renderPlayers();
+        }
+
+        function addCustomQuestion() {
+            const input = document.getElementById('input-custom-q');
+            const text = input.value.trim();
+            if (!text) return;
+
+            customQuestions.push(text);
+            input.value = '';
+            document.getElementById('custom-count').innerText = `${customQuestions.length} agregadas`;
+        }
+
+        // --- CONTROL DE PANTALLAS ---
+        function showScreen(screenId) {
+            ['screen-setup', 'screen-game', 'screen-round-result', 'screen-game-over'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        // --- INICIO DE PARTIDA ---
+        function startGame() {
+            if (players.length < 2) {
+                alert("Por favor añade al menos 2 jugadores.");
+                return;
+            }
+
+            // Reiniciar puntuaciones
+            players.forEach(p => p.score = 0);
+
+            // Cargar configuración
+            const catChoice = document.getElementById('select-category').value;
+            voteMode = document.getElementById('select-vote-mode').value;
+            totalRounds = parseInt(document.getElementById('select-rounds').value);
+
+            // Preparar preguntas
+            let pool = [];
+            if (catChoice === 'mix') {
+                Object.values(QUESTION_BANK).forEach(list => pool.push(...list));
+            } else {
+                pool = [...(QUESTION_BANK[catChoice] || QUESTION_BANK.funny)];
+            }
+
+            // Incluir personalizadas
+            pool.push(...customQuestions);
+
+            // Mezclar preguntas
+            activeQuestions = shuffleArray(pool);
+            if (totalRounds !== 999 && totalRounds < activeQuestions.length) {
+                activeQuestions = activeQuestions.slice(0, totalRounds);
+            }
+
+            currentQuestionIndex = 0;
+            showScreen('screen-game');
+            loadQuestionRound();
+        }
+
+        function loadQuestionRound() {
+            const qText = activeQuestions[currentQuestionIndex];
+            document.getElementById('current-question-text').innerText = `¿...${qText}`;
+            document.getElementById('game-round-current').innerText = currentQuestionIndex + 1;
+            document.getElementById('game-round-total').innerText = activeQuestions.length;
+
+            // Resetear votos
+            roundVotes = {};
+            players.forEach(p => roundVotes[p.id] = 0);
+
+            if (voteMode === 'secret') {
+                document.getElementById('vote-mode-secret').classList.remove('hidden');
+                document.getElementById('vote-mode-verbal').classList.add('hidden');
+                currentVoterIndex = 0;
+                updateTurnBanner();
+                renderVotingGrid();
+            } else {
+                document.getElementById('vote-mode-secret').classList.add('hidden');
+                document.getElementById('vote-mode-verbal').classList.remove('hidden');
+                document.getElementById('countdown-display').innerText = "3";
+                renderVerbalGrid();
+            }
+        }
+
+        // --- MODALIDAD VOTO SECRETO ---
+        function updateTurnBanner() {
+            const voter = players[currentVoterIndex];
+            document.getElementById('current-voter-name').innerText = voter.name;
+            document.getElementById('current-voter-name').style.color = voter.color;
+        }
+
+        function renderVotingGrid() {
+            const grid = document.getElementById('voting-candidates-grid');
+            grid.innerHTML = '';
+
+            players.forEach(p => {
+                const btn = document.createElement('button');
+                btn.className = "bg-party-card border border-party-border hover:border-party-pink p-3 rounded-2xl text-center space-y-1 transition transform active:scale-95 flex flex-col items-center justify-center";
+                btn.onclick = () => recordVote(p.id);
+                btn.innerHTML = `
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background-color: ${p.color}">
+                        ${p.name.charAt(0).toUpperCase()}
+                    </div>
+                    <span class="text-xs font-bold text-white truncate max-w-full">${escapeHtml(p.name)}</span>
+                `;
+                grid.appendChild(btn);
+            });
+        }
+
+        function recordVote(targetPlayerId) {
+            roundVotes[targetPlayerId] = (roundVotes[targetPlayerId] || 0) + 1;
+            currentVoterIndex++;
+
+            if (currentVoterIndex < players.length) {
+                updateTurnBanner();
+            } else {
+                // Terminan todos los votos de la ronda
+                finishRound();
+            }
+        }
+
+        // --- MODALIDAD VOTO VERBAL / CUENTA ATRÁS ---
+        function startVerbalCountdown() {
+            let count = 3;
+            const display = document.getElementById('countdown-display');
+            display.innerText = count;
+
+            const timer = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    display.innerText = count;
+                } else if (count === 0) {
+                    display.innerText = "¡APUNTEN! 👉";
+                    clearInterval(timer);
+                }
+            }, 900);
+        }
+
+        function renderVerbalGrid() {
+            const grid = document.getElementById('verbal-candidates-grid');
+            grid.innerHTML = '';
+
+            players.forEach(p => {
+                const btn = document.createElement('button');
+                btn.className = "bg-party-card border border-party-border hover:border-party-yellow p-3 rounded-2xl text-center space-y-1 transition flex flex-col items-center justify-center";
+                btn.onclick = () => recordVerbalWinner(p.id);
+                btn.innerHTML = `
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background-color: ${p.color}">
+                        ${p.name.charAt(0).toUpperCase()}
+                    </div>
+                    <span class="text-xs font-bold text-white truncate max-w-full">${escapeHtml(p.name)}</span>
+                `;
+                grid.appendChild(btn);
+            });
+        }
+
+        function recordVerbalWinner(winnerId) {
+            roundVotes[winnerId] = 1;
+            finishRound();
+        }
+
+        // --- EVALUACIÓN DE RONDA ---
+        function finishRound() {
+            // Determinar ganador(es)
+            let maxVotes = -1;
+            let winners = [];
+
+            Object.entries(roundVotes).forEach(([pId, count]) => {
+                if (count > maxVotes) {
+                    maxVotes = count;
+                    winners = [pId];
+                } else if (count === maxVotes && maxVotes > 0) {
+                    winners.push(pId);
+                }
+            });
+
+            // Asignar puntos
+            winners.forEach(wId => {
+                const p = players.find(x => x.id == wId);
+                if (p) p.score += 1;
+            });
+
+            const topWinner = players.find(x => x.id == winners[0]);
+
+            // Mostrar pantalla de resultados
+            document.getElementById('round-question-summary').innerText = `¿...${activeQuestions[currentQuestionIndex]}`;
+            document.getElementById('winner-name').innerText = topWinner.name;
+            document.getElementById('winner-avatar').style.backgroundColor = topWinner.color;
+            document.getElementById('winner-avatar').innerText = topWinner.name.charAt(0).toUpperCase();
+
+            // Desglose
+            const breakdownBox = document.getElementById('votes-breakdown-list');
+            breakdownBox.innerHTML = '';
+
+            if (voteMode === 'secret') {
+                document.getElementById('votes-breakdown-box').classList.remove('hidden');
+                players.forEach(p => {
+                    const votes = roundVotes[p.id] || 0;
+                    const percent = Math.round((votes / players.length) * 100);
+
+                    const row = document.createElement('div');
+                    row.className = "space-y-1";
+                    row.innerHTML = `
+                        <div class="flex justify-between text-xs font-bold text-slate-300">
+                            <span>${escapeHtml(p.name)}</span>
+                            <span>${votes} votos (${percent}%)</span>
+                        </div>
+                        <div class="w-full bg-party-bg h-2 rounded-full overflow-hidden border border-party-border">
+                            <div class="h-full rounded-full transition-all duration-500" style="width: ${percent}%; background-color: ${p.color}"></div>
+                        </div>
+                    `;
+                    breakdownBox.appendChild(row);
+                });
+            } else {
+                document.getElementById('votes-breakdown-box').classList.add('hidden');
+            }
+
+            showScreen('screen-round-result');
+
+            // Efecto de Confeti leve
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 40, spread: 60, origin: { y: 0.7 } });
+            }
+        }
+
+        function nextRound() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < activeQuestions.length) {
+                showScreen('screen-game');
+                loadQuestionRound();
+            } else {
+                showGameOver();
+            }
+        }
+
+        // --- PANTALLA FINAL ---
+        function showGameOver() {
+            showScreen('screen-game-over');
+
+            // Ordenar ranking
+            const sorted = [...players].sort((a, b) => b.score - a.score);
+
+            // Podio
+            if (sorted[0]) {
+                document.getElementById('p1-name').innerText = sorted[0].name;
+                document.getElementById('p1-score').innerText = `${sorted[0].score} pts`;
+                document.getElementById('p1-avatar').style.backgroundColor = sorted[0].color;
+                document.getElementById('p1-avatar').innerText = sorted[0].name.charAt(0).toUpperCase();
+            }
+            if (sorted[1]) {
+                document.getElementById('p2-name').innerText = sorted[1].name;
+                document.getElementById('p2-score').innerText = `${sorted[1].score} pts`;
+                document.getElementById('p2-avatar').style.backgroundColor = sorted[1].color;
+                document.getElementById('p2-avatar').innerText = sorted[1].name.charAt(0).toUpperCase();
+            }
+            if (sorted[2]) {
+                document.getElementById('p3-name').innerText = sorted[2].name;
+                document.getElementById('p3-score').innerText = `${sorted[2].score} pts`;
+                document.getElementById('p3-avatar').style.backgroundColor = sorted[2].color;
+                document.getElementById('p3-avatar').innerText = sorted[2].name.charAt(0).toUpperCase();
+            }
+
+            // Lista completa
+            const list = document.getElementById('final-leaderboard-list');
+            list.innerHTML = '';
+
+            sorted.forEach((p, idx) => {
+                const item = document.createElement('div');
+                item.className = "flex items-center justify-between bg-party-bg border border-party-border p-3 rounded-xl";
+                item.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold text-slate-400 text-xs w-4">#${idx + 1}</span>
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-xs" style="background-color: ${p.color}">
+                            ${p.name.charAt(0).toUpperCase()}
+                        </div>
+                        <span class="font-bold text-white text-sm">${escapeHtml(p.name)}</span>
+                    </div>
+                    <span class="font-extrabold text-party-pink font-mono text-sm">${p.score} menciones</span>
+                `;
+                list.appendChild(item);
+            });
+
+            // Super Confeti
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 120, spread: 100, origin: { y: 0.5 } });
+            }
+        }
+
+        // --- REINICIOS ---
+        function restartSameGame() {
+            startGame();
+        }
+
+        function returnToSetup() {
+            showScreen('screen-setup');
+        }
+
+        function confirmExitGame() {
+            if (confirm("¿Seguro que deseas salir de la partida en curso?")) {
+                showScreen('screen-setup');
+            }
+        }
+
+        // --- UTILIDADES ---
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+
+        // Inicializar renderizado
+        renderPlayers();
+    </script>
+</body>
+</html>

@@ -47,7 +47,9 @@ const translations = {
         tool_impostor_title: "Encuentra al impostor",
         tool_impostor_desc: "Descubre al impostor",
         tool_ev_title: "Calculadora EV",
-        tool_ev_desc: "Carga EV"
+        tool_ev_desc: "Carga EV",
+        tool_probable_title: "Quien + probable",
+        tool_probable_desc: "Quien es mas probable"
     },
     en: {
         nav_inicio: "Home",
@@ -97,7 +99,9 @@ const translations = {
         tool_impostor_title: "Find the impostor",
         tool_impostor_desc: "discover the impostor",
         tool_ev_title: "EV Calculator",
-        tool_ev_desc: "EV Charge"
+        tool_ev_desc: "EV Charge",
+        tool_probable_title: "Who is + likely",
+        tool_probable_desc: "Who is more likely"
     }
 };
 
