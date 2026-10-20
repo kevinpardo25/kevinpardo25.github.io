@@ -45,7 +45,9 @@ const translations = {
         tool_amigo_title: "Amigo Secreto",
         tool_amigo_desc: "Sorteo de regalos festivo",
         tool_impostor_title: "Encuentra al impostor",
-        tool_impostor_desc: "Descubre al impostor"
+        tool_impostor_desc: "Descubre al impostor",
+        tool_ev_title: "Calculadora EV",
+        tool_ev_desc: "Carga EV"
     },
     en: {
         nav_inicio: "Home",
@@ -93,7 +95,9 @@ const translations = {
         tool_amigo_title: "Secret Santa",
         tool_amigo_desc: "Festive gift exchange draw",
         tool_impostor_title: "Find the impostor",
-        tool_impostor_desc: "discover the impostor"
+        tool_impostor_desc: "discover the impostor",
+        tool_ev_title: "EV Calculator",
+        tool_ev_desc: "EV Charge"
     }
 };
 
