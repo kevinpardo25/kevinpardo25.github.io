@@ -38,7 +38,12 @@ const translations = {
         contact_btn_li: "LinkedIn Profile",
         contact_btn_mail: "Enviar Email",
         footer_text: "&copy; 2026 Kevin Pardo - Desarrollado con Foco y Precisión",
-        visits_label: "Visitas"
+        visits_label: "Visitas",
+        nav_herramientas: "Herramientas",
+        tool_ruleta_title: "Ruleta",
+        tool_ruleta_desc: "Toma decisiones al azar",
+        tool_amigo_title: "Amigo Secreto",
+        tool_amigo_desc: "Sorteo de regalos festivo"
     },
     en: {
         nav_inicio: "Home",
@@ -79,7 +84,12 @@ const translations = {
         contact_btn_li: "LinkedIn Profile",
         contact_btn_mail: "Send Email",
         footer_text: "&copy; 2026 Kevin Pardo - Developed with Focus & Precision",
-        visits_label: "Visits"
+        visits_label: "Visits",
+        nav_herramientas: "Tools",
+        tool_ruleta_title: "Wheel Spinner",
+        tool_ruleta_desc: "Random decision maker",
+        tool_amigo_title: "Secret Santa",
+        tool_amigo_desc: "Festive gift exchange draw"
     }
 };
 
@@ -191,19 +201,50 @@ document.addEventListener('DOMContentLoaded', () => {
         setTheme(newTheme);
     });
 
-    // Smooth scroll for nav links (updated selector for wrap)
+    // Smooth scroll for nav links (only for internal hash links)
     document.querySelectorAll('.nav-links a').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            e.preventDefault();
             const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
+            if (targetId && targetId.startsWith('#')) {
+                e.preventDefault();
+                const targetElement = document.querySelector(targetId);
 
-            if (targetElement) {
-                window.scrollTo({
-                    top: targetElement.offsetTop,
-                    behavior: 'smooth'
-                });
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
             }
         });
     });
+
+    // Dropdown menu toggle logic (for mobile / click support)
+    const dropdown = document.querySelector('.dropdown');
+    if (dropdown) {
+        const trigger = dropdown.querySelector('.dropdown-trigger');
+
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = dropdown.classList.toggle('open');
+            trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove('open');
+                trigger.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && dropdown.classList.contains('open')) {
+                dropdown.classList.remove('open');
+                trigger.setAttribute('aria-expanded', 'false');
+                trigger.focus();
+            }
+        });
+    }
 });

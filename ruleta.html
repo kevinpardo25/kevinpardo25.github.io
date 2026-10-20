@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Ruleta de opciones | Kevin Pardo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23050505%22/><text y=%22.9em%22 font-size=%2270%22 font-family=%22Outfit, sans-serif%22 font-weight=%22700%22 fill=%22%234f46e5%22 x=%2250%%22 text-anchor=%22middle%22>KP</text></svg>">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #222;
+        }
+
+        .container {
+            width: min(1200px, 95%);
+            margin: 0 auto;
+            padding: 30px 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 38px;
+        }
+
+        .app {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+        }
+
+        /* =========================
+           PANEL DE OPCIONES
+        ========================= */
+
+        .options-panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .options-panel h2 {
+            margin-top: 0;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        #optionInput {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        #optionInput:focus {
+            border-color: #667eea;
+        }
+
+        button {
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .add-btn {
+            background: #667eea;
+            color: white;
+            padding: 0 18px;
+            border-radius: 8px;
+        }
+
+        .add-btn:hover {
+            background: #5568d8;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 450px;
+            overflow-y: auto;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            background: #f4f5f9;
+            border-radius: 8px;
+        }
+
+        .option-number {
+            color: #667eea;
+            font-weight: bold;
+            min-width: 25px;
+        }
+
+        .option-text {
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .delete-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ff4757;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #e84118;
+        }
+
+        .clear-btn {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #eee;
+            color: #444;
+        }
+
+        .clear-btn:hover {
+            background: #ddd;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #999;
+            padding: 25px 10px;
+        }
+
+        /* =========================
+           RULETA
+        ========================= */
+
+        .wheel-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wheel-container {
+            position: relative;
+            width: min(500px, 80vw);
+            aspect-ratio: 1;
+        }
+
+        #wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 8px solid white;
+            box-shadow:
+                0 5px 15px rgba(0, 0, 0, 0.25),
+                0 0 0 4px #333;
+            transition: transform 5s cubic-bezier(0.15, 0.8, 0.2, 1);
+            display: block;
+        }
+
+        /* Indicador de la ruleta */
+
+        .pointer {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 45px solid #ff4757;
+            z-index: 10;
+            filter: drop-shadow(0 3px 3px rgba(0,0,0,0.3));
+        }
+
+        .center-button {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            background: white;
+            border: 6px solid #333;
+            z-index: 5;
+            font-weight: bold;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .center-button:hover {
+            background: #f1f1f1;
+        }
+
+        .spin-btn {
+            margin-top: 30px;
+            padding: 16px 50px;
+            border-radius: 50px;
+            background: #ff4757;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+        }
+
+        .spin-btn:hover {
+            background: #e84118;
+            transform: translateY(-2px);
+        }
+
+        .spin-btn:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* =========================
+           RESULTADO
+        ========================= */
+
+        .result {
+            margin-top: 25px;
+            min-height: 65px;
+            text-align: center;
+        }
+
+        .result-label {
+            color: #777;
+            font-size: 14px;
+        }
+
+        #winner {
+            display: block;
+            margin-top: 5px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+            word-break: break-word;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 800px) {
+
+            .app {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 30px;
+            }
+
+            .options-list {
+                max-height: 250px;
+            }
+
+            .wheel-container {
+                width: min(450px, 85vw);
+            }
+        }
+
+        /* =========================
+           TOP NAV & BACK BUTTON
+        ========================= */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 5px 0;
+            gap: 15px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 22px 10px 14px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            color: #ffffff;
+            text-decoration: none;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14.5px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .back-btn .btn-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.22);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.26);
+            border-color: rgba(255, 255, 255, 0.55);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.22), 0 0 20px rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+        }
+
+        .back-btn:hover .btn-icon {
+            transform: translateX(-3px);
+            background: rgba(255, 255, 255, 0.38);
+        }
+
+        .back-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+        }
+
+        .brand-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            color: rgba(255, 255, 255, 0.9);
+            font-family: 'Outfit', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .brand-badge strong {
+            color: #ffffff;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 7px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="top-nav">
+        <a href="index.html" class="back-btn" title="Regresar a Kevin Pardo - Portfolio">
+            <span class="btn-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </span>
+            <span>Volver al portafolio</span>
+        </a>
+        <div class="brand-badge">
+            <strong>KP</strong> Herramientas
+        </div>
+    </header>
+
+    <h1>🎡 Ruleta de opciones</h1>
+
+    <div class="app">
+
+        <!-- PANEL DE OPCIONES -->
+
+        <div class="options-panel">
+
+            <h2>Mis opciones</h2>
+
+            <div class="input-container">
+
+                <input
+                    type="text"
+                    id="optionInput"
+                    placeholder="Escribe una opción..."
+                    autocomplete="off"
+                >
+
+                <button
+                    class="add-btn"
+                    id="addBtn"
+                >
+                    Añadir
+                </button>
+
+            </div>
+
+            <ul
+                class="options-list"
+                id="optionsList"
+            ></ul>
+
+            <button
+                class="clear-btn"
+                id="clearBtn"
+            >
+                🗑️ Limpiar todas
+            </button>
+
+        </div>
+
+
+        <!-- RULETA -->
+
+        <div class="wheel-panel">
+
+            <div class="wheel-container">
+
+                <div class="pointer"></div>
+
+                <canvas
+                    id="wheel"
+                    width="600"
+                    height="600"
+                ></canvas>
+
+                <button
+                    class="center-button"
+                    id="centerButton"
+                >
+                    GIRAR
+                </button>
+
+            </div>
+
+            <button
+                class="spin-btn"
+                id="spinBtn"
+            >
+                🎡 GIRAR RULETA
+            </button>
+
+            <div class="result">
+
+                <span class="result-label">
+                    Resultado:
+                </span>
+
+                <span id="winner">
+                    —
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* =====================================
+       VARIABLES
+    ===================================== */
+
+    const optionInput = document.getElementById("optionInput");
+    const addBtn = document.getElementById("addBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const optionsList = document.getElementById("optionsList");
+
+    const spinBtn = document.getElementById("spinBtn");
+    const centerButton = document.getElementById("centerButton");
+
+    const winnerElement = document.getElementById("winner");
+
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+
+    let options = [];
+
+    let currentRotation = 0;
+    let spinning = false;
+
+
+    /* =====================================
+       COLORES
+    ===================================== */
+
+    const colors = [
+        "#FF6B6B",
+        "#4ECDC4",
+        "#45B7D1",
+        "#FFA07A",
+        "#98D8C8",
+        "#F7DC6F",
+        "#BB8FCE",
+        "#85C1E9",
+        "#F8C471",
+        "#82E0AA",
+        "#F1948A",
+        "#A569BD"
+    ];
+
+
+    /* =====================================
+       AÑADIR OPCIÓN
+    ===================================== */
+
+    function addOption() {
+
+        const value = optionInput.value.trim();
+
+        if (value === "") {
+            return;
+        }
+
+        options.push(value);
+
+        optionInput.value = "";
+
+        updateOptionsList();
+
+        drawWheel();
+
+        optionInput.focus();
+    }
+
+
+    /* =====================================
+       ELIMINAR OPCIÓN
+    ===================================== */
+
+    function deleteOption(index) {
+
+        if (spinning) {
+            return;
+        }
+
+        options.splice(index, 1);
+
+        updateOptionsList();
+
+        drawWheel();
+
+        winnerElement.textContent = "—";
+    }
+
+
+    /* =====================================
+       MOSTRAR LISTA
+    ===================================== */
+
+    function updateOptionsList() {
+
+        optionsList.innerHTML = "";
+
+        if (options.length === 0) {
+
+            const empty = document.createElement("div");
+
+            empty.className = "empty-message";
+
+            empty.textContent =
+                "Añade algunas opciones para comenzar.";
+
+            optionsList.appendChild(empty);
+
+            return;
+        }
+
+        options.forEach((option, index) => {
+
+            const li = document.createElement("li");
+
+            li.className = "option-item";
+
+            li.innerHTML = `
+                <span class="option-number">
+                    ${index + 1}
+                </span>
+
+                <span class="option-text">
+                    ${escapeHtml(option)}
+                </span>
+
+                <button
+                    class="delete-btn"
+                    onclick="deleteOption(${index})"
+                    title="Eliminar"
+                >
+                    ×
+                </button>
+            `;
+
+            optionsList.appendChild(li);
+
+        });
+    }
+
+
+    /* =====================================
+       EVITAR HTML INYECTADO
+    ===================================== */
+
+    function escapeHtml(text) {
+
+        const div = document.createElement("div");
+
+        div.textContent = text;
+
+        return div.innerHTML;
+    }
+
+
+    /* =====================================
+       DIBUJAR RULETA
+    ===================================== */
+
+    function drawWheel() {
+
+        const width = canvas.width;
+        const height = canvas.height;
+
+        const centerX = width / 2;
+        const centerY = height / 2;
+
+        const radius = width / 2 - 10;
+
+        ctx.clearRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+        if (options.length === 0) {
+
+            ctx.beginPath();
+
+            ctx.arc(
+                centerX,
+                centerY,
+                radius,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fillStyle = "#eeeeee";
+
+            ctx.fill();
+
+            ctx.fillStyle = "#999";
+
+            ctx.font = "bold 28px Arial";
+
+            ctx.textAlign = "center";
+
+            ctx.textBaseline = "middle";
+
+            ctx.fillText(
+                "Añade opciones",
+                centerX,
+                centerY
+            );
+
+            return;
+        }
+
+
+        const anglePerOption =
+            (Math.PI * 2) / options.length;
+
+
+        options.forEach((option, index) => {
+
+            const startAngle =
+                index * anglePerOption - Math.PI / 2;
+
+            const endAngle =
+                startAngle + anglePerOption;
+
+
+            /* Sector */
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                centerX,
+                centerY
+            );
+
+            ctx.arc(
+                centerX,
+                centerY,
+                radius,
+                startAngle,
+                endAngle
+            );
+
+            ctx.closePath();
+
+            ctx.fillStyle =
+                colors[index % colors.length];
+
+            ctx.fill();
+
+            ctx.strokeStyle = "#ffffff";
+
+            ctx.lineWidth = 3;
+
+            ctx.stroke();
+
+
+            /* Texto */
+
+            ctx.save();
+
+            ctx.translate(
+                centerX,
+                centerY
+            );
+
+            const middleAngle =
+                startAngle + anglePerOption / 2;
+
+            ctx.rotate(middleAngle);
+
+            ctx.textAlign = "right";
+
+            ctx.textBaseline = "middle";
+
+            ctx.fillStyle = "#ffffff";
+
+            ctx.font =
+                `bold ${getFontSize(option)}px Arial`;
+
+            ctx.shadowColor =
+                "rgba(0,0,0,0.35)";
+
+            ctx.shadowBlur = 3;
+
+            const maxTextWidth =
+                radius * 0.65;
+
+            let text = option;
+
+            while (
+                ctx.measureText(text).width >
+                maxTextWidth &&
+                text.length > 3
+            ) {
+                text = text.substring(
+                    0,
+                    text.length - 1
+                );
+            }
+
+            if (text !== option) {
+                text += "…";
+            }
+
+            ctx.fillText(
+                text,
+                radius - 25,
+                0
+            );
+
+            ctx.restore();
+
+        });
+
+
+        /* Centro */
+
+        ctx.beginPath();
+
+        ctx.arc(
+            centerX,
+            centerY,
+            38,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle = "#ffffff";
+
+        ctx.fill();
+
+        ctx.strokeStyle = "#333";
+
+        ctx.lineWidth = 4;
+
+        ctx.stroke();
+
+    }
+
+
+    /* =====================================
+       TAMAÑO DE TEXTO
+    ===================================== */
+
+    function getFontSize(text) {
+
+        if (options.length <= 4) {
+            return 25;
+        }
+
+        if (options.length <= 8) {
+            return 21;
+        }
+
+        if (options.length <= 15) {
+            return 17;
+        }
+
+        return 14;
+    }
+
+
+    /* =====================================
+       GIRAR RULETA
+    ===================================== */
+
+    function spinWheel() {
+
+        if (spinning) {
+            return;
+        }
+
+        if (options.length < 2) {
+
+            if (options.length === 0) {
+
+                winnerElement.textContent =
+                    "Añade opciones primero.";
+
+            } else {
+
+                winnerElement.textContent =
+                    "Añade al menos 2 opciones.";
+
+            }
+
+            return;
+        }
+
+
+        spinning = true;
+
+        spinBtn.disabled = true;
+
+        centerButton.disabled = true;
+
+        winnerElement.textContent = "Girando…";
+
+
+        /*
+         * Elegimos el ganador ANTES del giro.
+         *
+         * Esto garantiza que todas las opciones
+         * tengan exactamente la misma probabilidad.
+         */
+
+        const winnerIndex =
+            Math.floor(
+                Math.random() * options.length
+            );
+
+
+        const anglePerOption =
+            360 / options.length;
+
+
+        /*
+         * El puntero está arriba.
+         *
+         * Calculamos el ángulo necesario para
+         * colocar el centro del sector ganador
+         * debajo del puntero.
+         */
+
+        const targetAngle =
+            360 -
+            (
+                winnerIndex * anglePerOption +
+                anglePerOption / 2
+            );
+
+
+        /*
+         * Varias vueltas completas para conseguir
+         * una animación más espectacular.
+         */
+
+        const extraSpins =
+            5 + Math.floor(Math.random() * 3);
+
+
+        const finalRotation =
+            currentRotation +
+            extraSpins * 360 +
+            targetAngle;
+
+
+        currentRotation =
+            finalRotation;
+
+
+        canvas.style.transform =
+            `rotate(${finalRotation}deg)`;
+
+
+        /*
+         * Esperamos a que termine la animación.
+         */
+
+        setTimeout(() => {
+
+            winnerElement.textContent =
+                options[winnerIndex];
+
+            spinning = false;
+
+            spinBtn.disabled = false;
+
+            centerButton.disabled = false;
+
+        }, 5100);
+
+    }
+
+
+    /* =====================================
+       EVENTOS
+    ===================================== */
+
+    addBtn.addEventListener(
+        "click",
+        addOption
+    );
+
+
+    optionInput.addEventListener(
+        "keydown",
+        function(event) {
+
+            if (event.key === "Enter") {
+
+                addOption();
+
+            }
+
+        }
+    );
+
+
+    clearBtn.addEventListener(
+        "click",
+        function() {
+
+            if (spinning) {
+                return;
+            }
+
+            options = [];
+
+            winnerElement.textContent = "—";
+
+            updateOptionsList();
+
+            drawWheel();
+
+        }
+    );
+
+
+    spinBtn.addEventListener(
+        "click",
+        spinWheel
+    );
+
+
+    centerButton.addEventListener(
+        "click",
+        spinWheel
+    );
+
+
+    /* =====================================
+       INICIALIZACIÓN
+    ===================================== */
+
+    updateOptionsList();
+
+    drawWheel();
+
+</script>
+
+</body>
+</html>
