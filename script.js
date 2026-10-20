@@ -43,7 +43,9 @@ const translations = {
         tool_ruleta_title: "Ruleta",
         tool_ruleta_desc: "Toma decisiones al azar",
         tool_amigo_title: "Amigo Secreto",
-        tool_amigo_desc: "Sorteo de regalos festivo"
+        tool_amigo_desc: "Sorteo de regalos festivo",
+        tool_impostor_title: "Encuentra al impostor",
+        tool_impostor_desc: "Descubre al impostor"
     },
     en: {
         nav_inicio: "Home",
@@ -89,7 +91,9 @@ const translations = {
         tool_ruleta_title: "Wheel Spinner",
         tool_ruleta_desc: "Random decision maker",
         tool_amigo_title: "Secret Santa",
-        tool_amigo_desc: "Festive gift exchange draw"
+        tool_amigo_desc: "Festive gift exchange draw",
+        tool_impostor_title: "Find the impostor",
+        tool_impostor_desc: "discover the impostor"
     }
 };
 
