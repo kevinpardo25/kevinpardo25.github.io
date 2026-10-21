@@ -49,7 +49,9 @@ const translations = {
         tool_ev_title: "Calculadora EV",
         tool_ev_desc: "Carga EV",
         tool_probable_title: "Quien + probable",
-        tool_probable_desc: "Quien es mas probable"
+        tool_probable_desc: "Quien es mas probable",
+        tool_evgas_title: "EV VS GAS",
+        tool_evga_desc: "comparador gasolina ev"
     },
     en: {
         nav_inicio: "Home",
@@ -101,7 +103,9 @@ const translations = {
         tool_ev_title: "EV Calculator",
         tool_ev_desc: "EV Charge",
         tool_probable_title: "Who is + likely",
-        tool_probable_desc: "Who is more likely"
+        tool_probable_desc: "Who is more likely",
+        tool_evgas_title: "EV VS GAS",
+        tool_evga_desc: "gasoil comparator"
     }
 };
 
