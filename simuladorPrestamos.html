@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Préstamos y Amortización España - KP Herramientas</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            950: '#070a13',
+                            900: '#0f172a',
+                            800: '#1e293b',
+                            700: '#334155'
+                        },
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706'
+                        },
+                        emeraldCustom: {
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #070a13;
+            color: #f1f5f9;
+            overflow-x: hidden;
+        }
+
+        /* Top Navigation Header Styling */
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(51, 65, 85, 0.8);
+            padding: 0.75rem 1.25rem;
+            position: sticky;
+            top: 0;
+            z-index: 60;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #38bdf8;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 0.4rem 0.85rem;
+            border-radius: 0.5rem;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(51, 65, 85, 0.8);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover {
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+            transform: translateX(-2px);
+        }
+
+        .back-btn .btn-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.25s ease;
+        }
+
+        .back-btn:hover .btn-icon {
+            transform: translateX(-3px);
+        }
+
+        .brand-badge {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.85rem;
+            color: #e2e8f0;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            letter-spacing: 0.05em;
+        }
+
+        .brand-badge strong {
+            color: #10b981;
+            font-weight: 700;
+        }
+
+        /* Input styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: #1e293b;
+            border-radius: 9999px;
+            border: 1px solid #334155;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: #10b981;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -6px;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+            transition: transform 0.15s ease;
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070a13;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #10b981;
+        }
+
+        /* Print styles */
+        @media print {
+            .top-nav, .no-print {
+                display: none !important;
+            }
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+            }
+            .bg-navy-900, .bg-navy-800 {
+                background-color: #ffffff !important;
+                border: 1px solid #cccccc !important;
+                color: #000000 !important;
+            }
+            .text-white, .text-slate-300, .text-slate-400 {
+                color: #000000 !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Top Header REQUIRED -->
+    <header class="top-nav">
+        <a href="index.html" class="back-btn" title="Regresar a Kevin Pardo - Portfolio">
+            <span class="btn-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </span>
+            <span>Volver al portafolio</span>
+        </a>
+        <div class="brand-badge">
+            <strong>KP</strong> Herramientas
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6 flex-grow">
+
+        <!-- Title Banner -->
+        <div class="text-center space-y-2 py-2">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider">
+                <i class="fa-solid fa-calculator"></i> Sistema Francés de Amortización (España)
+            </div>
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight font-heading text-white">
+                Simulador de Préstamos y Amortización
+            </h1>
+            <p class="text-slate-400 text-sm md:text-base max-w-2xl mx-auto">
+                Calcula tu cuota mensual, compara intereses según TIN o TAE y descubre cuánto tiempo o dinero te ahorras haciendo abonos extraordinarios.
+            </p>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- INPUT CONTROLS PANEL (LEFT 5 COLS) -->
+            <div class="lg:col-span-5 space-y-6 no-print">
+
+                <!-- 1. Datos Principales del Préstamo -->
+                <div class="bg-navy-900 border border-navy-700 rounded-2xl p-5 shadow-xl space-y-4">
+                    <div class="flex items-center justify-between border-b border-navy-700 pb-3">
+                        <h2 class="font-heading font-bold text-base text-white flex items-center gap-2">
+                            <i class="fa-solid fa-euro-sign text-emerald-400"></i> Condiciones del Préstamo
+                        </h2>
+                        <span class="text-xs font-semibold text-slate-400">Paso 1</span>
+                    </div>
+
+                    <!-- Importe -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-xs">
+                            <label class="text-slate-300 font-semibold">Importe del Préstamo (€)</label>
+                            <input type="number" id="input-amount" value="150000" min="1000" max="1000000" step="1000"
+                                class="w-32 bg-navy-800 border border-navy-700 rounded-lg px-2.5 py-1 text-right text-emerald-400 font-bold outline-none focus:border-emerald-500 text-xs">
+                        </div>
+                        <input type="range" id="slider-amount" min="5000" max="500000" step="5000" value="150000" class="w-full">
+                    </div>
+
+                    <!-- Plazo y Unidad -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="space-y-1.5">
+                            <label class="text-xs text-slate-300 font-semibold">Plazo</label>
+                            <input type="number" id="input-term" value="25" min="1" max="40" step="1"
+                                class="w-full bg-navy-800 border border-navy-700 rounded-lg px-3 py-1.5 text-right text-white font-bold outline-none focus:border-emerald-500 text-xs">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs text-slate-300 font-semibold">Unidad del Plazo</label>
+                            <select id="select-term-unit" class="w-full bg-navy-800 border border-navy-700 rounded-lg px-3 py-1.5 text-white text-xs font-semibold outline-none focus:border-emerald-500">
+                                <option value="years" selected>Años</option>
+                                <option value="months">Meses</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tipo de Interés & Selector TIN / TAE -->
+                    <div class="space-y-2 pt-1">
+                        <div class="flex justify-between items-center text-xs">
+                            <div class="flex items-center gap-2">
+                                <label class="text-slate-300 font-semibold">Tipo de Interés (%)</label>
+                                <!-- Selector TIN / TAE -->
+                                <div class="inline-flex bg-navy-950 p-0.5 rounded-md border border-navy-700 text-[10px]">
+                                    <button id="btn-type-tin" onclick="setInterestType('TIN')" class="px-2 py-0.5 rounded bg-emerald-500 text-navy-950 font-bold transition">TIN</button>
+                                    <button id="btn-type-tae" onclick="setInterestType('TAE')" class="px-2 py-0.5 rounded text-slate-400 hover:text-white transition">TAE</button>
+                                </div>
+                            </div>
+                            <input type="number" id="input-rate" value="3.5" min="0.1" max="25" step="0.05"
+                                class="w-24 bg-navy-800 border border-navy-700 rounded-lg px-2.5 py-1 text-right text-emerald-400 font-bold outline-none focus:border-emerald-500 text-xs">
+                        </div>
+                        <input type="range" id="slider-rate" min="0.5" max="15" step="0.1" value="3.5" class="w-full">
+                    </div>
+
+                    <!-- Comisiones de Apertura / Gastos -->
+                    <div class="grid grid-cols-2 gap-3 pt-2 border-t border-navy-700/50">
+                        <div class="space-y-1">
+                            <label class="text-[11px] text-slate-400">Comisión Apertura (%)</label>
+                            <input type="number" id="input-fee-opening" value="0.5" min="0" max="5" step="0.1"
+                                class="w-full bg-navy-800 border border-navy-700 rounded-lg px-2.5 py-1 text-right text-slate-200 text-xs outline-none focus:border-emerald-500">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[11px] text-slate-400">Gastos Fijos Iniciales (€)</label>
+                            <input type="number" id="input-fee-fixed" value="300" min="0" max="5000" step="50"
+                                class="w-full bg-navy-800 border border-navy-700 rounded-lg px-2.5 py-1 text-right text-slate-200 text-xs outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Abonos Extraordinarios / Amortización Anticipada -->
+                <div class="bg-navy-900 border border-navy-700 rounded-2xl p-5 shadow-xl space-y-4 relative overflow-hidden">
+                    <div class="flex items-center justify-between border-b border-navy-700 pb-3">
+                        <h2 class="font-heading font-bold text-base text-gold-400 flex items-center gap-2">
+                            <i class="fa-solid fa-piggy-bank"></i> Amortización Anticipada
+                        </h2>
+                        <span class="text-[10px] uppercase font-bold text-gold-400/80 bg-gold-500/10 border border-gold-500/30 px-2 py-0.5 rounded-full">Optativo</span>
+                    </div>
+
+                    <!-- Habilitar Abono Extra -->
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-slate-300">¿Simular abonos extraordinarios?</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="check-enable-extra" class="sr-only peer" onchange="toggleExtraSection()">
+                            <div class="w-9 h-5 bg-navy-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                        </label>
+                    </div>
+
+                    <div id="extra-payments-container" class="space-y-4 pt-2 hidden">
+                        <!-- Frecuencia del Abono -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="space-y-1">
+                                <label class="text-[11px] text-slate-300 font-semibold">Tipo de Abono</label>
+                                <select id="select-extra-type" class="w-full bg-navy-800 border border-navy-700 rounded-lg px-2.5 py-1.5 text-white text-xs outline-none focus:border-emerald-500">
+                                    <option value="single">Único (un mes puntual)</option>
+                                    <option value="recurring_monthly">Recurrente Mensual</option>
+                                    <option value="recurring_yearly">Recurrente Anual</option>
+                                </select>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[11px] text-slate-300 font-semibold">Importe del Abono (€)</label>
+                                <input type="number" id="input-extra-amount" value="5000" min="100" max="200000" step="500"
+                                    class="w-full bg-navy-800 border border-navy-700 rounded-lg px-2.5 py-1.5 text-right text-gold-400 font-bold text-xs outline-none focus:border-emerald-500">
+                            </div>
+                        </div>
+
+                        <!-- Mes de inicio/aplicación -->
+                        <div class="space-y-1" id="box-extra-month">
+                            <label class="text-[11px] text-slate-300 font-semibold" id="lbl-extra-month">Mes de aplicación (ej. Mes 12)</label>
+                            <input type="number" id="input-extra-start-month" value="12" min="1" max="480" step="1"
+                                class="w-full bg-navy-800 border border-navy-700 rounded-lg px-2.5 py-1.5 text-right text-slate-200 text-xs outline-none focus:border-emerald-500">
+                        </div>
+
+                        <!-- Modalidad en España: Reducir Cuota vs Reducir Plazo -->
+                        <div class="space-y-1.5">
+                            <label class="text-[11px] text-slate-300 font-semibold">Estrategia Bancaria (España):</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button id="btn-strat-time" onclick="setExtraStrategy('time')" class="px-2.5 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 font-bold text-xs text-left flex items-center gap-1.5 transition">
+                                    <i class="fa-solid fa-clock-rotate-left"></i> Reducir Plazo
+                                </button>
+                                <button id="btn-strat-quota" onclick="setExtraStrategy('quota')" class="px-2.5 py-2 rounded-xl bg-navy-800 border border-navy-700 text-slate-400 font-semibold text-xs text-left flex items-center gap-1.5 hover:text-white transition">
+                                    <i class="fa-solid fa-arrow-down-short-wide"></i> Reducir Cuota
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Comisión por cancelación anticipada ley española -->
+                        <div class="space-y-1 pt-1 border-t border-navy-700/50">
+                            <div class="flex justify-between items-center text-[11px]">
+                                <span class="text-slate-400">Comisión Amortización Anticipada (%)</span>
+                                <input type="number" id="input-extra-penalty" value="0.25" min="0" max="2" step="0.05"
+                                    class="w-20 bg-navy-800 border border-navy-700 rounded px-2 py-0.5 text-right text-slate-200 text-xs outline-none focus:border-emerald-500">
+                            </div>
+                            <p class="text-[10px] text-slate-500 italic">Ley en España: máx. 0.15%-0.25% en hipotecas fijas/variables según antigüedad (Ley 5/2019).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Explicación Didáctica TIN vs TAE -->
+                <div class="bg-navy-900 border border-navy-700 rounded-2xl p-4 text-xs space-y-2 text-slate-300 shadow-xl">
+                    <h3 class="font-bold text-emerald-400 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-info"></i> ¿Diferencia entre TIN y TAE?
+                    </h3>
+                    <p class="text-[11px] leading-relaxed">
+                        • <strong>TIN (Tipo de Interés Nominal):</strong> Es el porcentaje oficial que cobra el banco solo por prestarte el dinero. Es la cifra base usada para calcular la cuota mensual.
+                    </p>
+                    <p class="text-[11px] leading-relaxed">
+                        • <strong>TAE (Tasa Anual Equivalente):</strong> Es el coste real del préstamo. Incluye el TIN más las comisiones de apertura, gastos obligatorios y la frecuencia de pagos.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- RESULTS & VISUALIZATIONS PANEL (RIGHT 7 COLS) -->
+            <div class="lg:col-span-7 space-y-6">
+
+                <!-- Primary KPI Highlight Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- Cuota Mensual -->
+                    <div class="bg-gradient-to-br from-navy-800 via-navy-900 to-navy-900 border border-emerald-500/40 rounded-2xl p-4 space-y-1 shadow-xl">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-400">
+                            <span>CUOTA MENSUAL</span>
+                            <i class="fa-solid fa-calendar-check text-emerald-400 text-base"></i>
+                        </div>
+                        <div id="res-monthly-quota" class="text-2xl font-extrabold text-emerald-400 font-heading">
+                            0.00 €
+                        </div>
+                        <p id="res-monthly-quota-sub" class="text-[11px] text-slate-400">
+                            Cuota inicial sin abonos
+                        </p>
+                    </div>
+
+                    <!-- Total Intereses -->
+                    <div class="bg-navy-900 border border-navy-700 rounded-2xl p-4 space-y-1 shadow-xl">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-400">
+                            <span>TOTAL INTERESES</span>
+                            <i class="fa-solid fa-percent text-gold-400 text-base"></i>
+                        </div>
+                        <div id="res-total-interest" class="text-2xl font-extrabold text-white font-heading">
+                            0.00 €
+                        </div>
+                        <p id="res-interest-sub" class="text-[11px] text-slate-400">
+                            Sin costes de comisiones
+                        </p>
+                    </div>
+
+                    <!-- Ahorro Alcanzado por Abonos -->
+                    <div class="bg-navy-900 border border-navy-700 rounded-2xl p-4 space-y-1 shadow-xl">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-400">
+                            <span>AHORRO ALCANZADO</span>
+                            <i class="fa-solid fa-trophy text-emerald-400 text-base"></i>
+                        </div>
+                        <div id="res-total-savings" class="text-2xl font-extrabold text-emerald-400 font-heading">
+                            0.00 €
+                        </div>
+                        <p id="res-time-saved-sub" class="text-[11px] text-slate-400">
+                            0 meses ganados
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Secondary Summary Bar (TAE Real y Coste Total) -->
+                <div class="bg-navy-900 border border-navy-700 rounded-2xl p-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center shadow-xl">
+                    <div class="border-r border-navy-700/50 pr-2">
+                        <span class="text-[10px] text-slate-400 font-bold uppercase block">TAE Calculada Real</span>
+                        <span id="res-calculated-tae" class="text-sm font-extrabold text-slate-200">0.00 %</span>
+                    </div>
+                    <div class="border-r border-navy-700/50 pr-2">
+                        <span class="text-[10px] text-slate-400 font-bold uppercase block">Comisiones Iniciales</span>
+                        <span id="res-initial-fees" class="text-sm font-extrabold text-slate-200">0.00 €</span>
+                    </div>
+                    <div class="border-r border-navy-700/50 pr-2">
+                        <span class="text-[10px] text-slate-400 font-bold uppercase block">Plazo Real Final</span>
+                        <span id="res-final-term" class="text-sm font-extrabold text-slate-200">0 meses</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 font-bold uppercase block">Total Pagado Final</span>
+                        <span id="res-grand-total" class="text-sm font-extrabold text-gold-400">0.00 €</span>
+                    </div>
+                </div>
+
+                <!-- Interactive Amortization Chart -->
+                <div class="bg-navy-900 border border-navy-700 rounded-2xl p-5 shadow-xl space-y-4">
+                    <div class="flex items-center justify-between border-b border-navy-700 pb-3">
+                        <div>
+                            <h3 class="font-heading font-bold text-base text-white">Evolución del Capital Pendiente</h3>
+                            <p class="text-xs text-slate-400">Comparativa con y sin amortización anticipada</p>
+                        </div>
+                        <div class="flex gap-3 text-xs">
+                            <span class="flex items-center gap-1 text-slate-400 font-semibold">
+                                <span class="w-2.5 h-2.5 rounded-full bg-slate-500 inline-block"></span> Plan Original
+                            </span>
+                            <span class="flex items-center gap-1 text-emerald-400 font-semibold">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span> Con Abonos
+                            </span>
+                        </div>
+                    </div>
+                    <div class="h-64 w-full">
+                        <canvas id="chart-amortization"></canvas>
+                    </div>
+                </div>
+
+                <!-- Amortization Table Section -->
+                <div class="bg-navy-900 border border-navy-700 rounded-2xl p-5 shadow-xl space-y-4">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-navy-700 pb-3">
+                        <h3 class="font-heading font-bold text-base text-white flex items-center gap-2">
+                            <i class="fa-solid fa-table-list text-emerald-400"></i> Tabla de Amortización (Mes a Mes)
+                        </h3>
+                        <div class="flex items-center gap-2 no-print">
+                            <button onclick="exportToCSV()" class="px-3 py-1.5 rounded-lg bg-navy-800 hover:bg-navy-700 border border-navy-700 text-xs font-semibold text-slate-200 transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-file-csv text-emerald-400"></i> CSV
+                            </button>
+                            <button onclick="window.print()" class="px-3 py-1.5 rounded-lg bg-navy-800 hover:bg-navy-700 border border-navy-700 text-xs font-semibold text-slate-200 transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-print text-sky-400"></i> Imprimir
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Scrollable Table -->
+                    <div class="overflow-x-auto max-h-96">
+                        <table class="w-full text-left text-xs">
+                            <thead class="sticky top-0 bg-navy-950 text-slate-400 border-b border-navy-700">
+                                <tr>
+                                    <th class="py-2.5 px-2">Mes</th>
+                                    <th class="py-2.5 px-2">Cuota Base</th>
+                                    <th class="py-2.5 px-2">Interés</th>
+                                    <th class="py-2.5 px-2">Amort. Capital</th>
+                                    <th class="py-2.5 px-2 text-gold-400">Abono Extra</th>
+                                    <th class="py-2.5 px-2 text-right">Pendiente</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-amortization-body" class="divide-y divide-navy-700/50 text-slate-200">
+                                <!-- Filas dinámicas en JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-navy-700 bg-navy-950 py-4 text-center text-xs text-slate-500 no-print">
+        Simulador de Préstamos España &copy; 2026 - KP Herramientas
+    </footer>
+
+    <!-- LOGIC JAVASCRIPT -->
+    <script>
+        // --- ESTADO Y VARIABLES GLOBALES ---
+        let interestType = 'TIN'; // 'TIN' o 'TAE'
+        let extraStrategy = 'time'; // 'time' (Reducir plazo) o 'quota' (Reducir cuota)
+        let chartInstance = null;
+
+        // Elementos DOM principales
+        const inputAmount = document.getElementById('input-amount');
+        const sliderAmount = document.getElementById('slider-amount');
+        const inputTerm = document.getElementById('input-term');
+        const selectTermUnit = document.getElementById('select-term-unit');
+        const inputRate = document.getElementById('input-rate');
+        const sliderRate = document.getElementById('slider-rate');
+
+        const inputFeeOpening = document.getElementById('input-fee-opening');
+        const inputFeeFixed = document.getElementById('input-fee-fixed');
+
+        const checkEnableExtra = document.getElementById('check-enable-extra');
+        const selectExtraType = document.getElementById('select-extra-type');
+        const inputExtraAmount = document.getElementById('input-extra-amount');
+        const inputExtraStartMonth = document.getElementById('input-extra-start-month');
+        const inputExtraPenalty = document.getElementById('input-extra-penalty');
+
+        // BINDING SLIDERS E INPUTS
+        function bindSync(input, slider, callback) {
+            input.addEventListener('input', () => {
+                slider.value = input.value;
+                callback();
+            });
+            slider.addEventListener('input', () => {
+                input.value = slider.value;
+                callback();
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            bindSync(inputAmount, sliderAmount, calculateLoan);
+            bindSync(inputRate, sliderRate, calculateLoan);
+
+            inputTerm.addEventListener('input', calculateLoan);
+            selectTermUnit.addEventListener('change', calculateLoan);
+
+            inputFeeOpening.addEventListener('input', calculateLoan);
+            inputFeeFixed.addEventListener('input', calculateLoan);
+
+            selectExtraType.addEventListener('change', updateExtraUI);
+            inputExtraAmount.addEventListener('input', calculateLoan);
+            inputExtraStartMonth.addEventListener('input', calculateLoan);
+            inputExtraPenalty.addEventListener('input', calculateLoan);
+
+            initChart();
+            calculateLoan();
+        });
+
+        // Alternar Selección TIN / TAE
+        function setInterestType(type) {
+            if (interestType === type) return;
+            interestType = type;
+
+            const btnTin = document.getElementById('btn-type-tin');
+            const btnTae = document.getElementById('btn-type-tae');
+
+            if (type === 'TIN') {
+                btnTin.className = "px-2 py-0.5 rounded bg-emerald-500 text-navy-950 font-bold transition";
+                btnTae.className = "px-2 py-0.5 rounded text-slate-400 hover:text-white transition";
+            } else {
+                btnTae.className = "px-2 py-0.5 rounded bg-emerald-500 text-navy-950 font-bold transition";
+                btnTin.className = "px-2 py-0.5 rounded text-slate-400 hover:text-white transition";
+            }
+
+            calculateLoan();
+        }
+
+        // Alternar Estrategia Amortización (Plazo vs Cuota)
+        function setExtraStrategy(strat) {
+            if (extraStrategy === strat) return;
+            extraStrategy = strat;
+
+            const btnTime = document.getElementById('btn-strat-time');
+            const btnQuota = document.getElementById('btn-strat-quota');
+
+            if (strat === 'time') {
+                btnTime.className = "px-2.5 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 font-bold text-xs text-left flex items-center gap-1.5 transition";
+                btnQuota.className = "px-2.5 py-2 rounded-xl bg-navy-800 border border-navy-700 text-slate-400 font-semibold text-xs text-left flex items-center gap-1.5 hover:text-white transition";
+            } else {
+                btnQuota.className = "px-2.5 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 font-bold text-xs text-left flex items-center gap-1.5 transition";
+                btnTime.className = "px-2.5 py-2 rounded-xl bg-navy-800 border border-navy-700 text-slate-400 font-semibold text-xs text-left flex items-center gap-1.5 hover:text-white transition";
+            }
+
+            calculateLoan();
+        }
+
+        // Mostrar / Ocultar contenedor de abonos
+        function toggleExtraSection() {
+            const container = document.getElementById('extra-payments-container');
+            if (checkEnableExtra.checked) {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+            calculateLoan();
+        }
+
+        function updateExtraUI() {
+            const type = selectExtraType.value;
+            const lblMonth = document.getElementById('lbl-extra-month');
+
+            if (type === 'single') {
+                lblMonth.innerText = "Mes del abono único (ej. Mes 12)";
+            } else if (type === 'recurring_monthly') {
+                lblMonth.innerText = "Comenzar a abonar desde el mes";
+            } else if (type === 'recurring_yearly') {
+                lblMonth.innerText = "Mes de aplicación cada año (ej. 12, 24...)";
+            }
+            calculateLoan();
+        }
+
+        // --- CÁLCULO PRINCIPAL Y AMORTIZACIÓN (SISTEMA FRANCÉS) ---
+        function calculateLoan() {
+            const capitalInitial = parseFloat(inputAmount.value) || 0;
+            const termVal = parseInt(inputTerm.value) || 1;
+            const termUnit = selectTermUnit.value;
+            const totalMonths = (termUnit === 'years') ? termVal * 12 : termVal;
+
+            const inputRateVal = parseFloat(inputRate.value) || 0;
+
+            // Convertir de TAE a TIN equivalente si es necesario
+            let tinAnnualRate = inputRateVal;
+            if (interestType === 'TAE') {
+                // Formula: TIN = 12 * ((1 + TAE/100)^(1/12) - 1) * 100
+                const taeDec = inputRateVal / 100;
+                const monthlyEquiv = Math.pow(1 + taeDec, 1 / 12) - 1;
+                tinAnnualRate = monthlyEquiv * 12 * 100;
+            }
+
+            const rMonthly = (tinAnnualRate / 100) / 12;
+
+            // Comisiones Iniciales
+            const feeOpeningPct = parseFloat(inputFeeOpening.value) || 0;
+            const feeFixed = parseFloat(inputFeeFixed.value) || 0;
+            const openingFeeCost = (capitalInitial * (feeOpeningPct / 100)) + feeFixed;
+
+            // 1. Cálculo de Cuota Estándar Sistema Francés (Sin Abonos)
+            let baseMonthlyQuota = 0;
+            if (rMonthly > 0) {
+                baseMonthlyQuota = capitalInitial * (rMonthly * Math.pow(1 + rMonthly, totalMonths)) / (Math.pow(1 + rMonthly, totalMonths) - 1);
+            } else {
+                baseMonthlyQuota = capitalInitial / totalMonths;
+            }
+
+            // SIMULACIÓN 1: PLAN BASE ORIGINAL (Sin Abonos)
+            let balanceBase = capitalInitial;
+            let totalInterestBase = 0;
+            const historyBase = [capitalInitial];
+
+            for (let m = 1; m <= totalMonths; m++) {
+                const interestM = balanceBase * rMonthly;
+                let principalM = baseMonthlyQuota - interestM;
+                if (principalM > balanceBase) principalM = balanceBase;
+
+                totalInterestBase += interestM;
+                balanceBase -= principalM;
+                historyBase.push(Math.max(0, balanceBase));
+            }
+
+            // SIMULACIÓN 2: PLAN CON ABONOS EXTRAORDINARIOS
+            const isExtraActive = checkEnableExtra.checked;
+            const extraType = selectExtraType.value;
+            const extraAmount = parseFloat(inputExtraAmount.value) || 0;
+            const extraStartM = parseInt(inputExtraStartMonth.value) || 1;
+            const penaltyPct = parseFloat(inputExtraPenalty.value) || 0;
+
+            let balanceExtra = capitalInitial;
+            let totalInterestWithExtra = 0;
+            let totalExtraPaid = 0;
+            let totalPenaltiesPaid = 0;
+            let currentQuota = baseMonthlyQuota;
+            let finalMonthsCount = 0;
+
+            const historyExtra = [capitalInitial];
+            const scheduleTable = [];
+
+            for (let m = 1; m <= totalMonths; m++) {
+                if (balanceExtra <= 0.01) {
+                    historyExtra.push(0);
+                    continue;
+                }
+
+                finalMonthsCount++;
+
+                // Interés del mes
+                const interestM = balanceExtra * rMonthly;
+
+                // Determinar si hay abono extra este mes
+                let extraThisMonth = 0;
+                if (isExtraActive && extraAmount > 0) {
+                    if (extraType === 'single' && m === extraStartM) {
+                        extraThisMonth = extraAmount;
+                    } else if (extraType === 'recurring_monthly' && m >= extraStartM) {
+                        extraThisMonth = extraAmount;
+                    } else if (extraType === 'recurring_yearly' && m >= extraStartM && ((m - extraStartM) % 12 === 0)) {
+                        extraThisMonth = extraAmount;
+                    }
+                }
+
+                // Cuota regular amortización
+                let principalM = currentQuota - interestM;
+
+                if (principalM > balanceExtra) {
+                    principalM = balanceExtra;
+                }
+
+                balanceExtra -= principalM;
+
+                // Aplicar Abono Extra si excede el saldo
+                if (extraThisMonth > balanceExtra) {
+                    extraThisMonth = balanceExtra;
+                }
+
+                let penaltyCost = 0;
+                if (extraThisMonth > 0) {
+                    penaltyCost = extraThisMonth * (penaltyPct / 100);
+                    totalPenaltiesPaid += penaltyCost;
+                    totalExtraPaid += extraThisMonth;
+                    balanceExtra -= extraThisMonth;
+                }
+
+                totalInterestWithExtra += interestM;
+                historyExtra.push(Math.max(0, balanceExtra));
+
+                // Registrar en Tabla
+                scheduleTable.push({
+                    month: m,
+                    quota: principalM + interestM,
+                    interest: interestM,
+                    principal: principalM,
+                    extra: extraThisMonth,
+                    penalty: penaltyCost,
+                    balance: Math.max(0, balanceExtra)
+                });
+
+                // Estrategia bancaria: Ajustar cuota para próximos meses si es 'quota'
+                if (isExtraActive && extraThisMonth > 0 && extraStrategy === 'quota' && balanceExtra > 0) {
+                    const remainingTermMonths = totalMonths - m;
+                    if (remainingTermMonths > 0 && rMonthly > 0) {
+                        currentQuota = balanceExtra * (rMonthly * Math.pow(1 + rMonthly, remainingTermMonths)) / (Math.pow(1 + rMonthly, remainingTermMonths) - 1);
+                    }
+                }
+            }
+
+            // --- CÁLCULO DE LA TAE REAL EFECTIVA ---
+            // Usando aproximación TIR con comisiones iniciales
+            const netCashReceived = capitalInitial - openingFeeCost;
+            let taeCalculated = tinAnnualRate; // Base por defecto
+
+            if (netCashReceived > 0 && baseMonthlyQuota > 0) {
+                let rateLow = 0;
+                let rateHigh = 1.0; // 100% mensual
+                for (let iter = 0; iter < 40; iter++) {
+                    let rateMid = (rateLow + rateHigh) / 2;
+                    let npv = -netCashReceived;
+                    for (let t = 1; t <= totalMonths; t++) {
+                        npv += baseMonthlyQuota / Math.pow(1 + rateMid, t);
+                    }
+                    if (npv > 0) {
+                        rateLow = rateMid;
+                    } else {
+                        rateHigh = rateMid;
+                    }
+                }
+                const monthlyTir = (rateLow + rateHigh) / 2;
+                taeCalculated = (Math.pow(1 + monthlyTir, 12) - 1) * 100;
+            }
+
+            // --- MOSTRAR RESULTADOS EN INTERFAZ ---
+            document.getElementById('res-monthly-quota').innerText = `${baseMonthlyQuota.toFixed(2)} €`;
+
+            if (isExtraActive && extraStrategy === 'quota' && scheduleTable.length > 0) {
+                const finalQuota = scheduleTable[scheduleTable.length - 1].quota;
+                document.getElementById('res-monthly-quota-sub').innerText = `Reducida progresivamente hasta ~${finalQuota.toFixed(2)} €`;
+            } else {
+                document.getElementById('res-monthly-quota-sub').innerText = `Cuota fija (Sistema Francés)`;
+            }
+
+            const activeInterestTotal = isExtraActive ? totalInterestWithExtra : totalInterestBase;
+            document.getElementById('res-total-interest').innerText = `${activeInterestTotal.toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €`;
+
+            // Ahorros y Tiempos
+            const savingsInterest = totalInterestBase - totalInterestWithExtra;
+            const savedMonths = totalMonths - finalMonthsCount;
+
+            if (isExtraActive) {
+                document.getElementById('res-total-savings').innerText = `${Math.max(0, savingsInterest).toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €`;
+                document.getElementById('res-time-saved-sub').innerText = extraStrategy === 'time' ? `${savedMonths} meses (${(savedMonths/12).toFixed(1)} años) ahorrados` : `Manteniendo el plazo original`;
+            } else {
+                document.getElementById('res-total-savings').innerText = `0.00 €`;
+                document.getElementById('res-time-saved-sub').innerText = `Activa abonos para calcular ahorro`;
+            }
+
+            // Resumen secundario
+            document.getElementById('res-calculated-tae').innerText = `${taeCalculated.toFixed(2)} %`;
+            document.getElementById('res-initial-fees').innerText = `${openingFeeCost.toFixed(2)} €`;
+            document.getElementById('res-final-term').innerText = isExtraActive && extraStrategy === 'time' ? `${finalMonthsCount} meses` : `${totalMonths} meses`;
+
+            const grandTotal = capitalInitial + activeInterestTotal + openingFeeCost + totalPenaltiesPaid;
+            document.getElementById('res-grand-total').innerText = `${grandTotal.toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €`;
+
+            // Renderizar Gráfico y Tabla
+            updateChart(historyBase, isExtraActive ? historyExtra : null);
+            renderTable(scheduleTable);
+        }
+
+        // Renderizado de Tabla de Amortización
+        function renderTable(schedule) {
+            const tbody = document.getElementById('table-amortization-body');
+            tbody.innerHTML = '';
+
+            schedule.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-navy-800/50 transition border-b border-navy-700/30";
+
+                tr.innerHTML = `
+                    <td class="py-2 px-2 font-bold text-slate-300">${row.month}</td>
+                    <td class="py-2 px-2">${row.quota.toFixed(2)} €</td>
+                    <td class="py-2 px-2 text-rose-400/90">${row.interest.toFixed(2)} €</td>
+                    <td class="py-2 px-2 text-emerald-400/90">${row.principal.toFixed(2)} €</td>
+                    <td class="py-2 px-2 font-bold text-gold-400">${row.extra > 0 ? '+' + row.extra.toFixed(2) + ' €' : '-'}</td>
+                    <td class="py-2 px-2 text-right font-semibold text-slate-100">${row.balance.toFixed(2)} €</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Exportar a CSV
+        function exportToCSV() {
+            const tbody = document.getElementById('table-amortization-body');
+            const rows = tbody.querySelectorAll('tr');
+
+            if (!rows.length) return;
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Mes,Cuota Base,Interes,Amortizacion Capital,Abono Extra,Saldo Pendiente\n";
+
+            rows.forEach(row => {
+                const cols = row.querySelectorAll('td');
+                const rowData = Array.from(cols).map(c => c.innerText.replace(' €', '').replace('+', '').trim()).join(",");
+                csvContent += rowData + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "tabla_amortizacion_prestamo.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Inicializar Chart.js
+        function initChart() {
+            const ctx = document.getElementById('chart-amortization').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Plan Original',
+                            data: [],
+                            borderColor: '#64748b',
+                            borderDash: [5, 5],
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        {
+                            label: 'Con Amortización Extra',
+                            data: [],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 2.5,
+                            pointRadius: 0,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${Math.round(context.raw).toLocaleString('es-ES')} €`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(51, 65, 85, 0.4)' },
+                            ticks: { color: '#94a3b8', font: { size: 10 } }
+                        },
+                        y: {
+                            grid: { color: 'rgba(51, 65, 85, 0.4)' },
+                            ticks: {
+                                color: '#94a3b8',
+                                font: { size: 10 },
+                                callback: function(value) { return value.toLocaleString('es-ES') + ' €'; }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Actualizar datos de la gráfica
+        function updateChart(historyBase, historyExtra) {
+            if (!chartInstance) return;
+
+            const labels = historyBase.map((_, idx) => `M${idx}`);
+
+            chartInstance.data.labels = labels;
+            chartInstance.data.datasets[0].data = historyBase;
+
+            if (historyExtra) {
+                chartInstance.data.datasets[1].data = historyExtra;
+                chartInstance.data.datasets[1].hidden = false;
+            } else {
+                chartInstance.data.datasets[1].data = historyBase;
+            }
+
+            chartInstance.update();
+        }
+    </script>
+</body>
+</html>
