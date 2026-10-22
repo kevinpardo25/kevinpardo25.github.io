@@ -51,7 +51,9 @@ const translations = {
         tool_probable_title: "Quien + probable",
         tool_probable_desc: "Quien es mas probable",
         tool_evgas_title: "EV VS GAS",
-        tool_evga_desc: "comparador gasolina ev"
+        tool_evga_desc: "comparador gasolina ev",
+        tool_cdt_title: "Simulador CDT",
+        tool_cdt_desc: "CDT"
     },
     en: {
         nav_inicio: "Home",
@@ -105,7 +107,9 @@ const translations = {
         tool_probable_title: "Who is + likely",
         tool_probable_desc: "Who is more likely",
         tool_evgas_title: "EV VS GAS",
-        tool_evga_desc: "gasoil comparator"
+        tool_evga_desc: "gasoil comparator",
+        tool_cdt_title: "CDT simulator",
+        tool_cdt_desc: "CDT"
     }
 };
 
