@@ -174,7 +174,7 @@ nav.scrolled {
 
 .dropdown-menu {
     position: absolute;
-    top: calc(100% + 0.75rem);
+    top: 100%; /* Se sitúa exactamente debajo del botón sin dejar huecos libres */
     right: 0;
     min-width: 230px;
     background: var(--card-bg);
@@ -182,7 +182,8 @@ nav.scrolled {
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--glass-border);
     border-radius: 14px;
-    padding: 0.5rem;
+    padding: 0.75rem 0.5rem 0.5rem 0.5rem; /* El padding superior actúa como puente invisible para el ratón */
+    margin-top: 0.35rem; /* Pequeña separación estética segura */
     box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4);
     opacity: 0;
     visibility: hidden;
