@@ -53,7 +53,9 @@ const translations = {
         tool_evgas_title: "EV VS GAS",
         tool_evga_desc: "comparador gasolina ev",
         tool_cdt_title: "Simulador CDT",
-        tool_cdt_desc: "CDT"
+        tool_cdt_desc: "CDT",
+        tool_imagenPeso_title: "Reductor peso imagen",
+        tool_imagenPeso_desc: "Reduce peso imagen"
     },
     en: {
         nav_inicio: "Home",
@@ -109,7 +111,9 @@ const translations = {
         tool_evgas_title: "EV VS GAS",
         tool_evga_desc: "gasoil comparator",
         tool_cdt_title: "CDT simulator",
-        tool_cdt_desc: "CDT"
+        tool_cdt_desc: "CDT",
+        tool_imagenPeso_title: "Image weight reducer",
+        tool_imagenPeso_desc: "Reduce image file size"
     }
 };
 

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compresor de Imágenes sin Pérdida Visible - KP Herramientas</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #111827;
+            --card-border: #1f2937;
+            --accent: #00f2fe;
+            --accent-glow: rgba(0, 242, 254, 0.25);
+            --accent-secondary: #4facfe;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+            --danger: #ef4444;
+            --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding-bottom: 3rem;
+        }
+
+        /* TOP NAV */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .brand-badge {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+        }
+
+        .brand-badge strong {
+            color: var(--accent);
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        header.app-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header.app-header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 30%, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        header.app-header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1.5rem;
+        }
+
+        /* UPLOAD ZONE */
+        .drop-zone {
+            border: 2px dashed var(--card-border);
+            border-radius: 12px;
+            padding: 3rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.01);
+        }
+
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: var(--accent);
+            background: rgba(0, 242, 254, 0.03);
+        }
+
+        .drop-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .drop-text {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .drop-text strong {
+            color: var(--accent);
+        }
+
+        /* CONTROLS */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        select {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        /* COMPARISON AREA */
+        .preview-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .preview-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .preview-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .preview-box h3 {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 0.8rem;
+        }
+
+        .img-wrapper {
+            width: 100%;
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 8px;
+            background-color: #05070d;
+            background-image: radial-gradient(#1f2937 1px, transparent 1px);
+            background-size: 16px 16px;
+        }
+
+        .img-wrapper img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .info-badge {
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        .savings-tag {
+            color: var(--success);
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-top: 0.2rem;
+        }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.85rem;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent-secondary), var(--accent));
+            color: #000;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.2s, transform 0.1s;
+            margin-top: 1.5rem;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAV -->
+    <header class="top-nav">
+        <a href="index.html" class="back-btn" title="Regresar al portafolio">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Volver al portafolio</span>
+        </a>
+        <div class="brand-badge">
+            <strong>KP</strong> Herramientas
+        </div>
+    </header>
+
+    <div class="container">
+        <header class="app-header">
+            <h1>Compresor de Imágenes Inteligente</h1>
+            <p>Reduce el peso de tus imágenes manteniendo la máxima fidelidad visual sin enviar datos a servidores externos.</p>
+        </header>
+
+        <!-- UPLOAD CARD -->
+        <div class="card">
+            <div class="drop-zone" id="dropZone">
+                <div class="drop-icon">🖼️</div>
+                <div class="drop-text">Arrastra tu imagen aquí o <strong>haz clic para seleccionar</strong></div>
+                <input type="file" id="fileInput" accept="image/png, image/jpeg, image/webp" class="hidden">
+            </div>
+
+            <!-- CONTROLS -->
+            <div id="controls" class="controls-grid hidden">
+                <div class="form-group">
+                    <label for="qualitySlider">Calidad Visual: <span id="qualityValue">85%</span></label>
+                    <input type="range" id="qualitySlider" min="10" max="100" value="85">
+                </div>
+
+                <div class="form-group">
+                    <label for="formatSelect">Formato de Salida</label>
+                    <select id="formatSelect">
+                        <option value="image/webp">WebP (Recomendado - Menor peso)</option>
+                        <option value="image/jpeg">JPEG (Universal)</option>
+                        <option value="image/png">PNG (Sin pérdida / Transparencias)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="scaleSelect">Escala / Redimensión</label>
+                    <select id="scaleSelect">
+                        <option value="1">Original (100%)</option>
+                        <option value="0.75">75% del tamaño</option>
+                        <option value="0.5">50% del tamaño</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- PREVIEW & DOWNLOAD -->
+        <div id="resultCard" class="card hidden">
+            <div class="preview-grid">
+                <div class="preview-box">
+                    <h3>Imagen Original</h3>
+                    <div class="img-wrapper">
+                        <img id="originalImg" alt="Original">
+                    </div>
+                    <div class="info-badge" id="originalInfo">Peso: -</div>
+                </div>
+
+                <div class="preview-box">
+                    <h3>Imagen Comprimida</h3>
+                    <div class="img-wrapper">
+                        <img id="compressedImg" alt="Comprimida">
+                    </div>
+                    <div class="info-badge" id="compressedInfo">Peso: -</div>
+                    <div class="savings-tag" id="savingsInfo">Ahorro: 0%</div>
+                </div>
+            </div>
+
+            <a id="downloadBtn" class="btn" download="imagen-comprimida">
+                ⬇️ Descargar Imagen Comprimida
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const controls = document.getElementById('controls');
+        const resultCard = document.getElementById('resultCard');
+        
+        const qualitySlider = document.getElementById('qualitySlider');
+        const qualityValue = document.getElementById('qualityValue');
+        const formatSelect = document.getElementById('formatSelect');
+        const scaleSelect = document.getElementById('scaleSelect');
+
+        const originalImg = document.getElementById('originalImg');
+        const compressedImg = document.getElementById('compressedImg');
+        const originalInfo = document.getElementById('originalInfo');
+        const compressedInfo = document.getElementById('compressedInfo');
+        const savingsInfo = document.getElementById('savingsInfo');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        let rawImage = null;
+        let originalFileSize = 0;
+        let originalFileName = '';
+
+        // Formateador de bytes
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Drag & Drop
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) handleFile(e.target.files[0]);
+        });
+
+        // Cargar imagen
+        function handleFile(file) {
+            if (!file.type.match(/image.*/)) return;
+
+            originalFileSize = file.size;
+            originalFileName = file.name.substring(0, file.name.lastIndexOf('.'));
+            originalInfo.textContent = `Peso: ${formatBytes(originalFileSize)}`;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                rawImage = new Image();
+                rawImage.onload = () => {
+                    originalImg.src = e.target.result;
+                    controls.classList.remove('hidden');
+                    resultCard.classList.remove('hidden');
+                    compressImage();
+                };
+                rawImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Proceso de Compresión mediante Canvas HTML5
+        function compressImage() {
+            if (!rawImage) return;
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            const scale = parseFloat(scaleSelect.value);
+            const targetWidth = rawImage.width * scale;
+            const targetHeight = rawImage.height * scale;
+
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+
+            ctx.drawImage(rawImage, 0, 0, targetWidth, targetHeight);
+
+            const format = formatSelect.value;
+            const quality = parseFloat(qualitySlider.value) / 100;
+
+            canvas.toBlob((blob) => {
+                if (!blob) return;
+
+                const compressedUrl = URL.createObjectURL(blob);
+                compressedImg.src = compressedUrl;
+
+                const compressedSize = blob.size;
+                compressedInfo.textContent = `Peso: ${formatBytes(compressedSize)}`;
+
+                const savings = ((originalFileSize - compressedSize) / originalFileSize) * 100;
+                if (savings > 0) {
+                    savingsInfo.textContent = `Ahorro: ${savings.toFixed(1)}% más ligera`;
+                    savingsInfo.style.color = 'var(--success)';
+                } else {
+                    savingsInfo.textContent = `Sin reducción significativa (${savings.toFixed(1)}%)`;
+                    savingsInfo.style.color = 'var(--danger)';
+                }
+
+                // Extensión de archivo según el formato
+                let ext = 'webp';
+                if (format === 'image/jpeg') ext = 'jpg';
+                if (format === 'image/png') ext = 'png';
+
+                downloadBtn.href = compressedUrl;
+                downloadBtn.download = `${originalFileName}-comprimido.${ext}`;
+            }, format, quality);
+        }
+
+        // Listeners de controles
+        qualitySlider.addEventListener('input', (e) => {
+            qualityValue.textContent = `${e.target.value}%`;
+            compressImage();
+        });
+
+        formatSelect.addEventListener('change', compressImage);
+        scaleSelect.addEventListener('change', compressImage);
+    </script>
+</body>
+</html>
